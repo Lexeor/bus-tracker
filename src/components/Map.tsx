@@ -1,5 +1,8 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+// @ts-expect-error This import is necessary
+import L from 'leaflet';
 import 'leaflet-routing-machine';
 import { type FC, useState } from 'react';
 import { MapContainer, TileLayer } from 'react-leaflet';
@@ -18,7 +21,7 @@ const routeCoordinatesStore: RouteCoordinates = {};
 // Main Map Component
 const Map: FC = () => {
   const [visibleRoutes, setVisibleRoutes] = useState([true, true]);
-  // @ts-ignore
+  // @ts-expect-error Will need in the future
   const [selectedStop, setSelectedStop] = useState<{ stop: Stop; line: Line } | null>(null);
   const center: [number, number] = [42.453, 18.531];
 

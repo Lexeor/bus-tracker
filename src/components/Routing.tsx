@@ -1,4 +1,3 @@
-// Routing Component
 import L from 'leaflet';
 import { type FC, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
@@ -44,6 +43,8 @@ const Routing: FC<{
           addWaypoints: false,
           fitSelectedRoutes: false,
           show: false,
+          //@ts-expect-error Doc not full
+          createMarker: () => null,
         });
 
         routingControl.addTo(map);
@@ -64,6 +65,8 @@ const Routing: FC<{
           addWaypoints: false,
           fitSelectedRoutes: false,
           show: false,
+          //@ts-expect-error Doc not full
+          createMarker: () => null,
         });
 
         routingControl.on('routesfound', (e: any) => {
