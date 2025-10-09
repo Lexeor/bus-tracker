@@ -18,6 +18,7 @@ const routeCoordinatesStore: RouteCoordinates = {};
 // Main Map Component
 const Map: FC = () => {
   const [visibleRoutes, setVisibleRoutes] = useState([true, true]);
+  // @ts-ignore
   const [selectedStop, setSelectedStop] = useState<{ stop: Stop; line: Line } | null>(null);
   const center: [number, number] = [42.453, 18.531];
 

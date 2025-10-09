@@ -81,8 +81,7 @@ const BusMarker: FC<{ line: Line; hidden?: boolean; routeCoordinatesStore: Route
   const [busPositions, setBusPositions] = useState<BusPosition[]>([]);
   const [routeReady, setRouteReady] = useState(false);
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const handleRouteReady = (coordinates: L.LatLng[]) => {
+  const handleRouteReady = () => {
     setRouteReady(true);
   };
 

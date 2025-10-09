@@ -1,4 +1,5 @@
 // Routing Component
+import L from 'leaflet';
 import { type FC, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import type { RouteCoordinates, Stop } from '../utils';
@@ -41,10 +42,8 @@ const Routing: FC<{
           },
           routeWhileDragging: false,
           addWaypoints: false,
-          draggableWaypoints: false,
           fitSelectedRoutes: false,
           show: false,
-          createMarker: () => null,
         });
 
         routingControl.addTo(map);
@@ -63,10 +62,8 @@ const Routing: FC<{
           },
           routeWhileDragging: false,
           addWaypoints: false,
-          draggableWaypoints: false,
           fitSelectedRoutes: false,
           show: false,
-          createMarker: () => null,
         });
 
         routingControl.on('routesfound', (e: any) => {
