@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+body {
+  min-height: 100vh;
+  overflow: hidden;
+  margin: 0;
+}
+
+.leaflet-container {
+  width: 100vw;
+  height: 100vh;
+}
+
+
+.leaflet-marker-icon:not(.bus-marker-icon),
+.leaflet-pane.leaflet-shadow-pane {
+  /*display: none !important;*/
+}
+
+.bus-icon {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgb(1, 87, 155);
+  border-radius: 99px;
+  border: 2px solid white;
+}
+
+.leaflet-top.leaflet-right {
+  display: none;
+}
