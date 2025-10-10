@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
@@ -35,15 +34,11 @@ const StopMarker: FC<{
   onStopClick: (stop: Stop, line: Line) => void;
 }> = ({ stop, line, isVisible, onStopClick }) => {
   const [nextBuses, setNextBuses] = useState<NextBusInfo[]>([]);
-  const [currentTime, setCurrentTime] = useState(dayjs().format('HH:mm:ss'));
 
   useEffect(() => {
     if (!stop || !line) return;
 
     const updateInfo = () => {
-      const now = dayjs();
-      setCurrentTime(now.format('HH:mm:ss'));
-
       const currentSeconds = getCurrentTimeInSeconds();
       const buses = calculateNextBuses(stop, line, currentSeconds);
       setNextBuses(buses);
@@ -64,15 +59,11 @@ const StopMarker: FC<{
         click: () => onStopClick(stop, line),
       }}
     >
-      <Popup>
-        <div style={{ minWidth: '200px' }}>
-          <h3 style={{ margin: '0 0 10px 0', color: line.color, fontSize: '14px' }}>{stop.name}</h3>
-          <p style={{ margin: '5px 0', fontSize: '12px', color: '#666' }}>Линия {line.id}</p>
-
-          <div className="mb-3 pb-3 border-b border-gray-200">
-            <p className="text-xs text-gray-500">Текущее время</p>
-            <p className="text-sm font-semibold">{currentTime}</p>
-          </div>
+      <Popup closeButton={false}>
+        <div className="min-w-[200px] pt-6!">
+          <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-0.5 text-center text-base" style={{ backgroundColor: line.color }}>
+            {stop.name}
+          </h3>
 
           <div>
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Ближайшие автобусы:</h3>
