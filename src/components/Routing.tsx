@@ -3,6 +3,8 @@ import { type FC, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import type { RouteCoordinates, Stop } from '../utils';
 
+const TEMP_OSRM_SRV_URL = 'http://84.201.130.230:5000/route/v1';
+
 const Routing: FC<{
   stops: Stop[];
   color: string;
@@ -45,6 +47,9 @@ const Routing: FC<{
           show: false,
           //@ts-expect-error Doc not full
           createMarker: () => null,
+          router: L.routing.osrmv1({
+            serviceUrl: TEMP_OSRM_SRV_URL,
+          }),
         });
 
         routingControl.addTo(map);
@@ -67,6 +72,9 @@ const Routing: FC<{
           show: false,
           //@ts-expect-error Doc not full
           createMarker: () => null,
+          router: L.routing.osrmv1({
+            serviceUrl: TEMP_OSRM_SRV_URL,
+          }),
         });
 
         routingControl.on('routesfound', (e: any) => {
