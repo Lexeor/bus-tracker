@@ -3,7 +3,7 @@ import { type FC, useEffect } from 'react';
 import { useMap } from 'react-leaflet';
 import type { RouteCoordinates, Stop } from '../utils';
 
-const TEMP_OSRM_SRV_URL = 'http://84.201.130.230/osrm/route/v1';
+const TEMP_OSRM_SRV_URL = 'https://bus-tracker.duckdns.org/osrm/route/v1';
 
 const Routing: FC<{
   stops: Stop[];
