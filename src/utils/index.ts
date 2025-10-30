@@ -54,12 +54,12 @@ export const getCurrentTimeInSeconds = (): number => {
 };
 
 export const formatTimeUntil = (seconds: number): string => {
-  if (seconds < 60) return `${seconds} сек`;
+  if (seconds < 60) return `${seconds} sek`;
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} мин`;
+  if (minutes < 60) return `${minutes} min`;
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours}ч ${mins}м`;
+  return `${hours}s ${mins}m`;
 };
 
 // Calculate angle between two points

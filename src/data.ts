@@ -15,7 +15,7 @@ interface BusLine {
 export const lines: BusLine[] = [
   {
     id: 1,
-    name: 'Линия 1: Igalo - Kamenari',
+    name: 'Linija 1: Igalo - Kamenari',
     color: 'red',
     stops: [
       {
@@ -370,7 +370,7 @@ export const lines: BusLine[] = [
   },
   {
     id: 2,
-    name: 'Линия 2: Каменари — Игало',
+    name: 'Linija 2: Kamenari — Igalo',
     color: '#01579b',
     stops: [
       {

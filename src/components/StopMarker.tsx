@@ -31,7 +31,7 @@ const StopMarker: FC<{
   stop: Stop;
   line: Line;
   isVisible: boolean;
-  onStopClick: (stop: Stop, line: Line) => void;
+  onStopClick?: (stop: Stop, line: Line) => void;
 }> = ({ stop, line, isVisible, onStopClick }) => {
   const [nextBuses, setNextBuses] = useState<NextBusInfo[]>([]);
 
@@ -56,19 +56,19 @@ const StopMarker: FC<{
       position={[stop.lat, stop.lng]}
       icon={createStopIcon(line.color)}
       eventHandlers={{
-        click: () => onStopClick(stop, line),
+        click: () => onStopClick?.(stop, line),
       }}
     >
       <Popup closeButton={false}>
         <div className="min-w-[200px] pt-6!">
-          <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-0.5 text-center text-base" style={{ backgroundColor: line.color }}>
+          <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-0.5 text-center" style={{ backgroundColor: line.color }}>
             {stop.name}
           </h3>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Ближайшие автобусы:</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">Autobusi u blizini vremena:</h3>
             {nextBuses.length === 0 ? (
-              <p className="text-sm text-gray-500">Нет автобусов в ближайшее время</p>
+              <p className="text-sm text-gray-500">Nema autobusa u bliskoj budućnosti.</p>
             ) : (
               <div className="space-y-2">
                 {nextBuses.slice(0, 3).map((bus) => (

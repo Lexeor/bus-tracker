@@ -187,7 +187,7 @@ const BusMarker: FC<{ line: Line; hidden?: boolean; routeCoordinatesStore: Route
               <Popup>
                 <div style={{ minWidth: '250px' }}>
                   <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
-                    Автобус #{bus.busIndex + 1} - Линия {line.id}
+                    Autobus #{bus.busIndex + 1} - Linija {line.id}
                   </h3>
                 </div>
               </Popup>
