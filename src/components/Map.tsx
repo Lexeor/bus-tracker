@@ -118,8 +118,8 @@ const Map: FC = () => {
   }, [shouldCenterOnUser]);
 
   return (
-    <div style={{ height: '100dvh', width: '100vw', position: 'relative' }}>
-      <MapContainer center={defaultCenter} zoom={13} style={{ height: '100%', width: '100%' }} className="bg-[#01579b]">
+    <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
+      <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -156,11 +156,15 @@ const Map: FC = () => {
         ))}
       </MapContainer>
 
-      {/* Location button */}
+      {/* Location button - with safe area padding */}
       <motion.button
         onClick={requestUserLocation}
         disabled={isLoadingLocation}
-        className="absolute top-4 right-4 z-[1000] bg-white hover:bg-gray-50 disabled:bg-gray-100 p-3 rounded-lg shadow-lg transition-all"
+        className="absolute z-[1000] bg-white hover:bg-gray-50 disabled:bg-gray-100 p-3 rounded-lg shadow-lg transition-all"
+        style={{
+          top: 'max(1rem, env(safe-area-inset-top) + 0.5rem)',
+          right: '1rem',
+        }}
         title="Show my location"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
@@ -182,26 +186,36 @@ const Map: FC = () => {
 
       <Disclaimer />
 
-      {/* Location error message */}
+      {/* Location error message - with safe area padding */}
       {locationError && (
-        <div className="absolute top-20 right-4 z-[1000] bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg max-w-xs">
+        <div
+          className="absolute z-[1000] bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg max-w-xs right-4"
+          style={{
+            top: 'max(5rem, env(safe-area-inset-top) + 4.5rem)',
+          }}
+        >
           {locationError}
         </div>
       )}
 
-      {/* Route visibility toggles */}
-      <div className="absolute bottom-0 left-0 right-0 flex justify-center p-4 z-[1000] text-black">
+      {/* Route visibility toggles - with safe area padding */}
+      <div
+        className="absolute left-0 right-0 flex justify-center px-4 z-[1000] text-black"
+        style={{
+          bottom: 'max(1rem, env(safe-area-inset-bottom) + 0.5rem)',
+        }}
+      >
         <div className="bg-white/40 backdrop-blur-sm rounded-sm p-4 pt-2 w-full md:w-auto text-center">
           <h3>Autobuske linije</h3>
           <div className="flex gap-2 justify-center">
             <button
-              onClick={() => setVisibleRoutes((prev) => [!prev[0], prev[1]])}
+              onClick={() => setVisibleRoutes((prev: boolean[]) => [!prev[0], prev[1]])}
               className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[0] ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-600'}`}
             >
               1
             </button>
             <button
-              onClick={() => setVisibleRoutes((prev) => [prev[0], !prev[1]])}
+              onClick={() => setVisibleRoutes((prev: boolean[]) => [prev[0], !prev[1]])}
               className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-600'}`}
             >
               2
