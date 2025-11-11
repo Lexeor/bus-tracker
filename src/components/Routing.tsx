@@ -1,66 +1,89 @@
 import L from 'leaflet';
-import { type FC, useEffect } from 'react';
+import { type FC, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 import type { RouteCoordinates, Stop } from '../utils';
 
 const TEMP_OSRM_SRV_URL = 'https://bus-tracker.duckdns.org/osrm/route/v1';
 
-const Routing: FC<{
+interface RoutingProps {
   stops: Stop[];
   color: string;
   lineId: number;
   onRouteReady: (coordinates: L.LatLng[]) => void;
   hidden?: boolean;
   routeCoordinatesStore: RouteCoordinates;
-}> = ({ stops, color, lineId, onRouteReady, hidden, routeCoordinatesStore }) => {
+}
+
+// Extend the type to include internal properties
+interface RoutingControl extends L.Routing.Control {
+  _plan?: any;
+  _line?: L.Polyline;
+}
+
+const Routing: FC<RoutingProps> = ({ stops, color, lineId, onRouteReady, hidden, routeCoordinatesStore }) => {
   const map = useMap();
+  const routingControlRef = useRef<RoutingControl | null>(null);
+  const polylineRef = useRef<L.Polyline | null>(null);
 
   useEffect(() => {
     if (!map) return;
 
-    let routingControl: any = null;
+    // Cleanup function
+    const cleanup = () => {
+      if (polylineRef.current) {
+        map.removeLayer(polylineRef.current);
+        polylineRef.current = null;
+      }
 
-    // If hidden, just ensure we have coordinates cached but don't show
+      if (routingControlRef.current) {
+        try {
+          const control = routingControlRef.current;
+          if (control._plan) {
+            control._plan.setWaypoints([]);
+          }
+          if (control._line) {
+            map.removeLayer(control._line);
+          }
+          map.removeControl(control);
+        } catch (error) {
+          console.warn('Error removing routing control:', error);
+        }
+        routingControlRef.current = null;
+      }
+    };
+
+    // If hidden, don't render anything
     if (hidden) {
+      cleanup();
+
+      // But notify parent if we have cached data
       if (routeCoordinatesStore[lineId]) {
         onRouteReady(routeCoordinatesStore[lineId]);
       }
       return;
     }
 
-    // Check if we already have cached coordinates
-    if (routeCoordinatesStore[lineId]) {
-      onRouteReady(routeCoordinatesStore[lineId]);
+    // Check if we have cached coordinates
+    const cachedCoordinates = routeCoordinatesStore[lineId];
 
-      // Still need to create control to show the line
+    if (cachedCoordinates && cachedCoordinates.length > 0) {
+      // Use cached data - just draw a polyline
       try {
-        routingControl = L.Routing.control({
-          waypoints: stops.map((s) => L.latLng(s.lat, s.lng)),
-          lineOptions: {
-            styles: [{ color, weight: 4, opacity: 0.6 }],
-            extendToWaypoints: false,
-            missingRouteTolerance: 0,
-          },
-          routeWhileDragging: false,
-          addWaypoints: false,
-          fitSelectedRoutes: false,
-          show: false,
-          //@ts-expect-error Doc not full
-          createMarker: () => null,
-          router: L.routing.osrmv1({
-            serviceUrl: TEMP_OSRM_SRV_URL,
-          }),
-        });
+        polylineRef.current = L.polyline(cachedCoordinates, {
+          color,
+          weight: 4,
+          opacity: 0.6,
+        }).addTo(map);
 
-        routingControl.addTo(map);
+        onRouteReady(cachedCoordinates);
       } catch (error) {
-        console.error('Error creating routing control:', error);
+        console.error('Error creating polyline from cache:', error);
       }
     } else {
-      // First time - create control and cache coordinates
+      // First time - fetch route from OSRM
       try {
-        routingControl = L.Routing.control({
-          waypoints: stops.map((s) => L.latLng(s.lat, s.lng)),
+        const routingControl = L.Routing.control({
+          waypoints: stops.map((stop) => L.latLng(stop.lat, stop.lng)),
           lineOptions: {
             styles: [{ color, weight: 4, opacity: 0.6 }],
             extendToWaypoints: false,
@@ -70,46 +93,38 @@ const Routing: FC<{
           addWaypoints: false,
           fitSelectedRoutes: false,
           show: false,
-          //@ts-expect-error Doc not full
+          // @ts-expect-error - leaflet-routing-machine types are incomplete
           createMarker: () => null,
           router: L.routing.osrmv1({
             serviceUrl: TEMP_OSRM_SRV_URL,
           }),
-        });
+        }) as RoutingControl;
 
         routingControl.on('routesfound', (e: any) => {
           const routes = e.routes;
-          if (routes && routes[0]) {
-            const coordinates = routes[0].coordinates;
+          if (routes?.[0]?.coordinates) {
+            const coordinates: L.LatLng[] = routes[0].coordinates;
+
+            // Cache the coordinates
             routeCoordinatesStore[lineId] = coordinates;
+
             onRouteReady(coordinates);
           }
         });
 
+        routingControl.on('routingerror', (e: any) => {
+          console.error('Routing error for line', lineId, ':', e);
+        });
+
         routingControl.addTo(map);
+        routingControlRef.current = routingControl;
       } catch (error) {
         console.error('Error creating routing control:', error);
       }
     }
 
-    return () => {
-      if (routingControl && map) {
-        try {
-          setTimeout(() => {
-            if (routingControl._plan) {
-              routingControl._plan.setWaypoints([]);
-            }
-            if (routingControl._line) {
-              map.removeLayer(routingControl._line);
-            }
-            map.removeControl(routingControl);
-          }, 0);
-        } catch (error) {
-          console.warn('Error removing routing control:', error);
-        }
-      }
-    };
-  }, [map, lineId, hidden]);
+    return cleanup;
+  }, [map, lineId, hidden, color, stops, onRouteReady, routeCoordinatesStore]);
 
   return null;
 };
