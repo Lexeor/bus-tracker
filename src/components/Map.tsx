@@ -7,6 +7,7 @@ import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import BusMarker from '../components/BusMarker';
 import Disclaimer from '../components/Disclaimer.tsx';
+import LanguageSwitch from '../components/LanguageSwitch';
 import StopMarker from '../components/StopMarker';
 import { defaultCenter, VISIBLE_ROUTES_KEY } from '../constants.ts';
 import { lines } from '../data.ts';
@@ -185,6 +186,8 @@ const Map: FC = () => {
       </motion.button>
 
       <Disclaimer />
+
+      <LanguageSwitch />
 
       {/* Location error message - with safe area padding */}
       {locationError && (

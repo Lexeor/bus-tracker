@@ -4,3 +4,5 @@ export const VISIBLE_ROUTES_KEY = 'busapp-visible-routes';
 export const defaultCenter: [number, number] = [42.453, 18.531];
 
 export const DISCLAIMER_STORAGE_KEY = 'disclaimer_seen';
+
+export const LANGUAGE_KEY = 'ME';
