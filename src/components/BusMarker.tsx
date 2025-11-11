@@ -2,7 +2,15 @@ import dayjs from 'dayjs';
 import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
-import { type BusPosition, findClosestPointWithDirection, getCurrentTimeInSeconds, interpolateAlongRouteWithRotation, type Line, parseTimeToSeconds, type RouteCoordinates } from '../utils';
+import {
+  type BusPosition,
+  findClosestPointWithDirection,
+  getCurrentTimeInSeconds,
+  interpolateAlongRouteWithRotation,
+  type Line,
+  parseTimeToSeconds,
+  type RouteCoordinates,
+} from '../utils';
 import Routing from './Routing.tsx';
 
 // Custom bus icon with rotation
@@ -76,8 +84,14 @@ const createBusIcon = (color: string, lineId: number, rotation: number = 0) => {
   });
 };
 
+interface BusMarkerProps {
+  line: Line;
+  hidden?: boolean;
+  routeCoordinatesStore: RouteCoordinates;
+}
+
 // Bus Markers Component
-const BusMarker: FC<{ line: Line; hidden?: boolean; routeCoordinatesStore: RouteCoordinates }> = ({ line, hidden, routeCoordinatesStore }) => {
+const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) => {
   const [busPositions, setBusPositions] = useState<BusPosition[]>([]);
   const [routeReady, setRouteReady] = useState(false);
 
@@ -86,7 +100,7 @@ const BusMarker: FC<{ line: Line; hidden?: boolean; routeCoordinatesStore: Route
   };
 
   useEffect(() => {
-    if (!routeReady || !routeCoordinatesStore[line.id] || hidden) {
+    if (!routeReady || !routeCoordinatesStore[line.id]) {
       return;
     }
 
@@ -179,22 +193,29 @@ const BusMarker: FC<{ line: Line; hidden?: boolean; routeCoordinatesStore: Route
 
   return (
     <>
-      {!hidden && (
-        <>
-          <Routing stops={line.stops} color={line.color} lineId={line.id} onRouteReady={handleRouteReady} routeCoordinatesStore={routeCoordinatesStore} />
-          {busPositions.map((bus) => (
-            <Marker key={`bus-${line.id}-${bus.busIndex}`} position={bus.position} icon={createBusIcon(line.color, line.id, bus.rotation)}>
-              <Popup>
-                <div style={{ minWidth: '250px' }}>
-                  <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
-                    Autobus #{bus.busIndex + 1} - Linija {line.id}
-                  </h3>
-                </div>
-              </Popup>
-            </Marker>
-          ))}
-        </>
-      )}
+      <Routing
+        stops={line.stops}
+        color={line.color}
+        lineId={line.id}
+        onRouteReady={handleRouteReady}
+        routeCoordinatesStore={routeCoordinatesStore}
+        hidden={hidden}
+      />
+      {busPositions.map((bus) => (
+        <Marker
+          key={`bus-${line.id}-${bus.busIndex}`}
+          position={bus.position}
+          icon={createBusIcon(line.color, line.id, bus.rotation)}
+        >
+          <Popup>
+            <div style={{ minWidth: '250px' }}>
+              <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
+                Autobus #{bus.busIndex + 1} - Linija {line.id}
+              </h3>
+            </div>
+          </Popup>
+        </Marker>
+      ))}
     </>
   );
 };
