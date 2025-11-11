@@ -13,10 +13,11 @@ export interface Line {
   id: number;
   name: string;
   color: string;
+  type: string;
   stops: Stop[];
 }
 
-export interface BusPosition {
+export interface TransportPosition {
   position: [number, number];
   busIndex: number;
   fromStop: string;
@@ -26,7 +27,8 @@ export interface BusPosition {
   departureTime: string;
   arrivalTime: string;
   currentTime: string;
-  rotation: number; // Add rotation angle
+  rotation: number;
+  type: string;
 }
 
 export interface NextBusInfo {

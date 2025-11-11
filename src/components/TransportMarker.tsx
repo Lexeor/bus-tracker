@@ -3,20 +3,63 @@ import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 import {
-  type BusPosition,
   findClosestPointWithDirection,
   getCurrentTimeInSeconds,
   interpolateAlongRouteWithRotation,
   type Line,
   parseTimeToSeconds,
   type RouteCoordinates,
+  type TransportPosition,
 } from '../utils';
 import Routing from './Routing.tsx';
 
+const busIcon = `
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="-2 -2 28 28"
+      fill="none"
+      stroke="white"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      style="position: absolute; z-index: 200; border-radius: 50%; padding: 4px;"
+    >
+      <path d="M4 6 2 7" />
+      <path d="M10 6h4" />
+      <path d="m22 7-2-1" />
+      <rect width="16" height="16" x="4" y="3" rx="2" />
+      <path d="M4 11h16" />
+      <path d="M8 15h.01" />
+      <path d="M16 15h.01" />
+      <path d="M6 19v2" />
+      <path d="M18 21v-2" />
+    </svg>`;
+
+const ferryIcon = `<svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      style="position: absolute; z-index: 200; border-radius: 50%; padding: 4px;"
+    >
+      <path d="M12 10.189V14" />
+      <path d="M12 2v3" />
+      <path d="M19 13V7a2 2 0 0 0-2-2H7a2 2 0 0 0-2 2v6" />
+      <path d="M19.38 20A11.6 11.6 0 0 0 21 14l-8.188-3.639a2 2 0 0 0-1.624 0L3 14a11.6 11.6 0 0 0 2.81 7.76" />
+      <path d="M2 21c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1s1.2 1 2.5 1c2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1" />
+    </svg>`;
+
 // Custom bus icon with rotation
-const createBusIcon = (color: string, lineId: number, rotation: number = 0) => {
+const createTransportIcon = (color: string, lineId: number, rotation: number = 0, type: string = 'bus') => {
   const iconHtml = `
-    <div style="position: relative; width: 30px; height: 30px;">
+    <div style="position: relative; width: 30px; height: 30px; z-index: 2000">
       <div style="
         position: absolute;
         background-color: white;
@@ -35,31 +78,7 @@ const createBusIcon = (color: string, lineId: number, rotation: number = 0) => {
         z-index: 1;
         box-shadow: 0 1px 3px rgba(0,0,0,0.3);
       ">${lineId}</div>
-      <svg xmlns="http://www.w3.org/2000/svg"
-         width="24"
-         height="24"
-         viewBox="-2 -2 28 28"
-         fill="none"
-         stroke="white"
-         stroke-width="2"
-         stroke-linecap="round"
-         stroke-linejoin="round"
-         style="
-           position: absolute;
-           z-index: 200;
-           border-radius: 50%;
-           padding: 4px;
-         ">
-        <path d="M4 6 2 7" />
-        <path d="M10 6h4" />
-        <path d="m22 7-2-1" />
-        <rect width="16" height="16" x="4" y="3" rx="2" />
-        <path d="M4 11h16" />
-        <path d="M8 15h.01" />
-        <path d="M16 15h.01" />
-        <path d="M6 19v2" />
-        <path d="M18 21v-2" />
-      </svg>
+      ${type === 'bus' ? busIcon : ferryIcon}
       <div style="
         position: absolute;
         width: 24px;
@@ -91,8 +110,8 @@ interface BusMarkerProps {
 }
 
 // Bus Markers Component
-const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) => {
-  const [busPositions, setBusPositions] = useState<BusPosition[]>([]);
+const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) => {
+  const [transportPositions, setTransportPositions] = useState<TransportPosition[]>([]);
   const [routeReady, setRouteReady] = useState(false);
 
   const handleRouteReady = () => {
@@ -107,7 +126,7 @@ const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) 
     const updatePositions = () => {
       const currentTime = getCurrentTimeInSeconds();
       const routeCoords = routeCoordinatesStore[line.id];
-      const positions: BusPosition[] = [];
+      const positions: TransportPosition[] = [];
 
       // Calculate bus positions with rotation
       const busCount = line.stops[0].time.length;
@@ -148,6 +167,7 @@ const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) 
                 fromStop: currentStop.name,
                 toStop: nextStop.name,
                 progress,
+                type: line.type,
                 isOnRoute: true,
                 departureTime: line.stops[0].time[busIndex],
                 arrivalTime: line.stops[line.stops.length - 1].time[busIndex],
@@ -169,6 +189,7 @@ const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) 
 
           positions.push({
             position: [lastStop.lat, lastStop.lng],
+            type: line.type,
             rotation: lastStopPoint.rotation,
             busIndex,
             fromStop: lastStop.name,
@@ -182,7 +203,7 @@ const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) 
         }
       }
 
-      setBusPositions(positions);
+      setTransportPositions(positions);
     };
 
     updatePositions();
@@ -201,23 +222,30 @@ const BusMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) 
         routeCoordinatesStore={routeCoordinatesStore}
         hidden={hidden}
       />
-      {busPositions.map((bus) => (
-        <Marker
-          key={`bus-${line.id}-${bus.busIndex}`}
-          position={bus.position}
-          icon={createBusIcon(line.color, line.id, bus.rotation)}
-        >
-          <Popup>
-            <div style={{ minWidth: '250px' }}>
-              <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
-                Autobus #{bus.busIndex + 1} - Linija {line.id}
-              </h3>
-            </div>
-          </Popup>
-        </Marker>
-      ))}
+      {transportPositions.map((transport) => {
+        // Hide ferry markers when line is hidden
+        if (hidden && line.type === 'ferry') {
+          return null;
+        }
+
+        return (
+          <Marker
+            key={`bus-${line.id}-${transport.busIndex}`}
+            position={transport.position}
+            icon={createTransportIcon(line.color, line.id, transport.rotation, line.type)}
+          >
+            <Popup>
+              <div style={{ minWidth: '250px' }}>
+                <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
+                  Autobus #{transport.busIndex + 1} - Linija {line.id}
+                </h3>
+              </div>
+            </Popup>
+          </Marker>
+        );
+      })}
     </>
   );
 };
 
-export default BusMarker;
+export default TransportMarker;

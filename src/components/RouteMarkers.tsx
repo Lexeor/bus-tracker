@@ -1,11 +1,11 @@
 import { type FC, Fragment } from 'react';
-import BusMarker from '../components/BusMarker';
 import StopMarker from '../components/StopMarker';
-import type { BusLine } from '../data';
+import TransportMarker from '../components/TransportMarker';
+import type { TransportLine } from '../data';
 import type { RouteCoordinates } from '../utils';
 
 interface RouteMarkersProps {
-  lines: BusLine[];
+  lines: TransportLine[];
   visibleRoutes: boolean[];
   routeCoordinatesStore: RouteCoordinates;
 }
@@ -18,7 +18,7 @@ const RouteMarkers: FC<RouteMarkersProps> = ({ lines, visibleRoutes, routeCoordi
     <>
       {lines.map((line, index) => (
         <Fragment key={line.id}>
-          <BusMarker line={line} hidden={!visibleRoutes[index]} routeCoordinatesStore={routeCoordinatesStore} />
+          <TransportMarker line={line} hidden={!visibleRoutes[index]} routeCoordinatesStore={routeCoordinatesStore} />
           {line.stops.map((stop, stopIndex) => (
             <StopMarker key={`${line.id}-${stopIndex}`} stop={stop} line={line} isVisible={visibleRoutes[index]} />
           ))}
