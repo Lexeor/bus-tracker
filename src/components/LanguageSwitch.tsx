@@ -1,24 +1,26 @@
 import { GB, ME, RU } from 'country-flag-icons/react/1x1';
 import { motion } from 'motion/react';
-import { type FC, type ReactNode, useState } from 'react';
+import { type FC, Fragment, type ReactNode, useState } from 'react';
 import { LANGUAGE_KEY } from '../constants.ts';
-import { useLocalStorage } from '../hooks/use-local-storage.ts';
+import { useLocalStorage } from '../hooks/use-local-storage';
+import { activateLocale } from '../i18n';
 
 interface LanguageSwitchProps {}
 
 const LanguageSwitch: FC<LanguageSwitchProps> = () => {
-  const [currentLanguage, setCurrentLanguage] = useLocalStorage<string>(LANGUAGE_KEY, 'ME');
+  const [currentLanguage, setCurrentLanguage] = useLocalStorage<string>(LANGUAGE_KEY, 'en');
   const [open, setOpen] = useState(false);
 
   const handleLanguageClick = (lang: string) => {
     setCurrentLanguage(lang);
     setOpen(false);
+    activateLocale(lang);
   };
 
   const languages: Record<string, ReactNode> = {
-    ME: <ME title="Crnogorski" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('ME')} />,
-    EN: <GB title="English" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('EN')} />,
-    RU: <RU title="Русский" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('RU')} />,
+    me: <ME title="Crnogorski" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('me')} />,
+    en: <GB title="English" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('en')} />,
+    ru: <RU title="Русский" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('ru')} />,
   };
 
   return (
@@ -36,7 +38,7 @@ const LanguageSwitch: FC<LanguageSwitchProps> = () => {
       {open ? (
         <>
           {Array.from(Object.keys(languages)).map((lang) => (
-            <>{languages[lang]}</>
+            <Fragment key={lang}>{languages[lang]}</Fragment>
           ))}
         </>
       ) : (
