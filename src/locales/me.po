@@ -14,6 +14,26 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:242
+msgid "bus"
+msgstr "Autobus"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:242
+msgid "ferry"
+msgstr "Trajekt"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:242
+msgid "line"
+msgstr "Linija"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:21
+msgid "busLines"
+msgstr "Transportne linije"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:82
 msgid "nextBuses"
 msgstr "Autobusi u blizini vremena:"
@@ -24,26 +44,21 @@ msgid "noBuses"
 msgstr "Nema autobusa u bliskoj budućnosti."
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:20
-msgid "busLines"
-msgstr "Autobuske linije"
-
-#. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:77
+#: src/components/Disclaimer.tsx:72
 msgid "warning"
 msgstr "Obratite pažnju"
 
 #. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:77
+#: src/components/Disclaimer.tsx:72
 msgid "locationWarning"
 msgstr "pozicija vozila na mapi se izračunava na osnovu statičkog reda vožnje i nije povezana sa realnom GPS pozicijom autobusa na ruti."
 
 #. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:79
+#: src/components/Disclaimer.tsx:74
 msgid "information"
 msgstr "Koristite informacije samo u informativne svrhe."
 
 #. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:80
+#: src/components/Disclaimer.tsx:75
 msgid "refreshPage"
 msgstr "Ako nešto ne radi - osvježite stranicu"

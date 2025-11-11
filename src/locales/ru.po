@@ -14,6 +14,26 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:242
+msgid "bus"
+msgstr "Автобус"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:242
+msgid "ferry"
+msgstr "Паром"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:242
+msgid "line"
+msgstr "Линия"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:21
+msgid "busLines"
+msgstr "Транспортные линии"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:82
 msgid "nextBuses"
 msgstr "Следующие автобусы"
@@ -24,26 +44,21 @@ msgid "noBuses"
 msgstr "Нет автобусов в ближайшее время."
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:20
-msgid "busLines"
-msgstr "Автобусные линии"
-
-#. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:77
+#: src/components/Disclaimer.tsx:72
 msgid "warning"
 msgstr "Обратите внимание"
 
 #. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:77
+#: src/components/Disclaimer.tsx:72
 msgid "locationWarning"
 msgstr "Местоположение транспорта на карте рассчитывается на основе статичного расписания и не привязано к реальному GPS-положению автобуса на маршруте."
 
 #. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:79
+#: src/components/Disclaimer.tsx:74
 msgid "information"
 msgstr "Информация предоставлена исключительно в ознакомительных целях."
 
 #. js-lingui-explicit-id
-#: src/components/Disclaimer.tsx:80
+#: src/components/Disclaimer.tsx:75
 msgid "refreshPage"
 msgstr "Если что-то не работает - обновите страницу"

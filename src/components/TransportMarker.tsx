@@ -1,3 +1,4 @@
+import { useLingui } from '@lingui/react';
 import dayjs from 'dayjs';
 import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
@@ -113,6 +114,7 @@ interface BusMarkerProps {
 const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) => {
   const [transportPositions, setTransportPositions] = useState<TransportPosition[]>([]);
   const [routeReady, setRouteReady] = useState(false);
+  const { i18n } = useLingui();
 
   const handleRouteReady = () => {
     setRouteReady(true);
@@ -237,7 +239,8 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
             <Popup>
               <div style={{ minWidth: '250px' }}>
                 <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
-                  Autobus #{transport.busIndex + 1} - Linija {line.id}
+                  {line.type === 'bus' ? i18n._('bus') : i18n._('ferry')} #{transport.busIndex + 1} - {i18n._('line')}{' '}
+                  {line.id}
                 </h3>
               </div>
             </Popup>
