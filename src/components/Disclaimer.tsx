@@ -1,16 +1,16 @@
+import Multilingual from '@/components/Multilingual';
+import {
+  DISCLAIMER_STORAGE_KEY,
+  FIRST_LANGUAGE_SELECTED_STORAGE_KEY,
+  SHOW_DISCLAIMER_STORAGE_KEY,
+} from '@/constants.ts';
+import { useLocalStorage } from '@/hooks/use-local-storage';
+import { activateLocale } from '@/i18n.ts';
 import { useLingui } from '@lingui/react';
 import { GB, ME, RU } from 'country-flag-icons/react/3x2';
 import { CircleQuestionMarkIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { type FC, useEffect } from 'react';
-import Multilingual from '../components/Multilingual';
-import {
-  DISCLAIMER_STORAGE_KEY,
-  FIRST_LANGUAGE_SELECTED_STORAGE_KEY,
-  SHOW_DISCLAIMER_STORAGE_KEY,
-} from '../constants.ts';
-import { useLocalStorage } from '../hooks/use-local-storage';
-import { activateLocale } from '../i18n.ts';
 
 interface DisclaimerProps {}
 

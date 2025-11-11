@@ -1,8 +1,3 @@
-import { useLingui } from '@lingui/react';
-import dayjs from 'dayjs';
-import L from 'leaflet';
-import { type FC, useEffect, useState } from 'react';
-import { Marker, Popup } from 'react-leaflet';
 import {
   findClosestPointWithDirection,
   getCurrentTimeInSeconds,
@@ -11,7 +6,12 @@ import {
   parseTimeToSeconds,
   type RouteCoordinates,
   type TransportPosition,
-} from '../utils';
+} from '@/utils';
+import { useLingui } from '@lingui/react';
+import dayjs from 'dayjs';
+import L from 'leaflet';
+import { type FC, useEffect, useState } from 'react';
+import { Marker, Popup } from 'react-leaflet';
 import Routing from './Routing.tsx';
 
 const busIcon = `

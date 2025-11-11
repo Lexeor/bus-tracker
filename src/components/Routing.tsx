@@ -1,7 +1,7 @@
+import type { RouteCoordinates, Stop } from '@/utils';
 import L from 'leaflet';
 import { type FC, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
-import type { RouteCoordinates, Stop } from '../utils';
 
 const TEMP_OSRM_SRV_URL = 'https://bus-tracker.duckdns.org/osrm/route/v1';
 

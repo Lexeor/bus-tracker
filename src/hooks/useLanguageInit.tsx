@@ -1,6 +1,6 @@
+import { LANGUAGE_KEY } from '@/constants';
+import { activateLocale } from '@/i18n';
 import { useEffect } from 'react';
-import { LANGUAGE_KEY } from '../constants';
-import { activateLocale } from '../i18n';
 
 /**
  * Hook to initialize and handle language changes

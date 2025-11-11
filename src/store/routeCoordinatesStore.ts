@@ -1,4 +1,4 @@
-import type { RouteCoordinates } from '../utils';
+import type { RouteCoordinates } from '@/utils';
 
 /**
  * Global store for route coordinates

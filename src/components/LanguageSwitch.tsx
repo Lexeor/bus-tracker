@@ -1,9 +1,9 @@
+import { LANGUAGE_KEY } from '@/constants.ts';
+import { useLocalStorage } from '@/hooks/use-local-storage';
+import { activateLocale } from '@/i18n';
 import { GB, ME, RU } from 'country-flag-icons/react/1x1';
 import { motion } from 'motion/react';
 import { type FC, Fragment, type ReactNode, useState } from 'react';
-import { LANGUAGE_KEY } from '../constants.ts';
-import { useLocalStorage } from '../hooks/use-local-storage';
-import { activateLocale } from '../i18n';
 
 interface LanguageSwitchProps {}
 

@@ -1,8 +1,8 @@
+import StopMarker from '@/components/StopMarker';
+import TransportMarker from '@/components/TransportMarker';
+import type { TransportLine } from '@/data';
+import type { RouteCoordinates } from '@/utils';
 import { type FC, Fragment } from 'react';
-import StopMarker from '../components/StopMarker';
-import TransportMarker from '../components/TransportMarker';
-import type { TransportLine } from '../data';
-import type { RouteCoordinates } from '../utils';
 
 interface RouteMarkersProps {
   lines: TransportLine[];

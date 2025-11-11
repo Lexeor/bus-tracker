@@ -1,7 +1,3 @@
-import { useLingui } from '@lingui/react';
-import L from 'leaflet';
-import { type FC, useEffect, useState } from 'react';
-import { Marker, Popup } from 'react-leaflet';
 import {
   calculateNextBuses,
   formatTimeUntil,
@@ -9,7 +5,11 @@ import {
   type Line,
   type NextBusInfo,
   type Stop,
-} from '../utils';
+} from '@/utils';
+import { useLingui } from '@lingui/react';
+import L from 'leaflet';
+import { type FC, useEffect, useState } from 'react';
+import { Marker, Popup } from 'react-leaflet';
 
 // Custom stop icon
 const createStopIcon = (color: string, isSelected: boolean = false) => {
