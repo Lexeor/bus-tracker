@@ -1,132 +1,56 @@
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { motion } from 'motion/react';
-import { type FC, useEffect, useRef, useState } from 'react';
-import { Circle, MapContainer, Marker, ScaleControl, TileLayer, useMap } from 'react-leaflet';
+import { type FC, useMemo } from 'react';
+import { MapContainer, ScaleControl, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
-import BusMarker from '../components/BusMarker';
-import Disclaimer from '../components/Disclaimer.tsx';
+import Disclaimer from '../components/Disclaimer';
 import LanguageSwitch from '../components/LanguageSwitch';
-import StopMarker from '../components/StopMarker';
-import { defaultCenter, LANGUAGE_KEY, VISIBLE_ROUTES_KEY } from '../constants';
+import LocationErrorMessage from '../components/LocationErrorMessage';
+import MapCenterController from '../components/MapCenterController';
+import RouteMarkers from '../components/RouteMarkers';
+import UserLocationButton from '../components/UserLocationButton';
+import UserLocationMarker from '../components/UserLocationMarker';
+import { defaultCenter, VISIBLE_ROUTES_KEY } from '../constants';
 import { lines } from '../data';
 import { useLocalStorageBooleanArray } from '../hooks/use-local-storage';
-import { activateLocale } from '../i18n';
-import type { RouteCoordinates } from '../utils';
+import { useGeolocation } from '../hooks/useGeolocation';
+import { useInitialRoutesFlash } from '../hooks/useInitialRoutesFlash';
+import { useLanguageInit } from '../hooks/useLanguageInit';
+import { routeCoordinatesStore } from '../store/routeCoordinatesStore';
 import RoutesPanel from './RoutesPanel';
-import { userLocationIcon } from './UserLocationIcon';
 
 dayjs.extend(customParseFormat);
 
-// Store for route coordinates
-const routeCoordinatesStore: RouteCoordinates = {};
-
-// Component to handle map centering
-const MapCenterController: FC<{ center: [number, number] | null }> = ({ center }) => {
-  const map = useMap();
-
-  useEffect(() => {
-    if (center) {
-      map.setView(center, 15);
-    }
-  }, [center, map]);
-
-  return null;
-};
-
-// Main Map Component
+/**
+ * Main Map Component
+ * Orchestrates the map view with user location, routes, and controls
+ */
 const Map: FC = () => {
-  const [visibleRoutes, setVisibleRoutes] = useLocalStorageBooleanArray(VISIBLE_ROUTES_KEY, [false, false]);
+  // Language initialization
+  useLanguageInit();
 
-  const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
-  const [locationError, setLocationError] = useState<string | null>(null);
-  const [isLoadingLocation, setIsLoadingLocation] = useState<boolean>(false);
-  const [shouldCenterOnUser, setShouldCenterOnUser] = useState<boolean>(false);
-  const watchIdRef = useRef<number | null>(null);
+  // Routes visibility state
+  const [visibleRoutes, setVisibleRoutes] = useLocalStorageBooleanArray(
+    VISIBLE_ROUTES_KEY,
+    Array(lines.length).fill(false),
+  );
 
-  const language = localStorage.getItem(LANGUAGE_KEY) || 'en';
+  // Initial routes flash effect (workaround for initial bus rendering)
+  useInitialRoutesFlash(setVisibleRoutes, lines.length);
 
-  useEffect(() => {
-    if (language) {
-      activateLocale(language.replaceAll('"', ''));
-    }
-  }, [language]);
+  // Geolocation management
+  const {
+    location: userLocation,
+    error: locationError,
+    isLoading: isLoadingLocation,
+    shouldCenter: shouldCenterOnUser,
+    requestLocation,
+    clearError,
+  } = useGeolocation();
 
-  // Request user location
-  const requestUserLocation = (): void => {
-    if (!navigator.geolocation) {
-      setLocationError('Geolocation is not supported by your browser');
-      return;
-    }
-
-    setIsLoadingLocation(true);
-    setLocationError(null);
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const { latitude, longitude } = position.coords;
-        setUserLocation([latitude, longitude]);
-        setShouldCenterOnUser(true);
-        setIsLoadingLocation(false);
-
-        // Start watching position for updates
-        if (watchIdRef.current === null) {
-          watchIdRef.current = navigator.geolocation.watchPosition(
-            (pos) => {
-              setUserLocation([pos.coords.latitude, pos.coords.longitude]);
-            },
-            (error) => {
-              console.error('Error watching position:', error);
-            },
-            {
-              enableHighAccuracy: true,
-              maximumAge: 10000,
-              timeout: 5000,
-            },
-          );
-        }
-      },
-      (error) => {
-        setIsLoadingLocation(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            setLocationError('Location permission denied');
-            break;
-          case error.POSITION_UNAVAILABLE:
-            setLocationError('Location information unavailable');
-            break;
-          case error.TIMEOUT:
-            setLocationError('Location request timed out');
-            break;
-          default:
-            setLocationError('An unknown error occurred');
-        }
-      },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      },
-    );
-  };
-
-  // Cleanup watch position on unmount
-  useEffect(() => {
-    return () => {
-      if (watchIdRef.current !== null) {
-        navigator.geolocation.clearWatch(watchIdRef.current);
-      }
-    };
-  }, []);
-
-  // Reset center flag after centering
-  useEffect(() => {
-    if (shouldCenterOnUser) {
-      const timer = setTimeout(() => setShouldCenterOnUser(false), 100);
-      return () => clearTimeout(timer);
-    }
-  }, [shouldCenterOnUser]);
+  // Memoize center value to avoid unnecessary re-renders
+  const mapCenter = useMemo(() => (shouldCenterOnUser ? userLocation : null), [shouldCenterOnUser, userLocation]);
 
   return (
     <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
@@ -139,80 +63,26 @@ const Map: FC = () => {
         <ScaleControl position="bottomright" />
 
         {/* Center map on user location when requested */}
-        <MapCenterController center={shouldCenterOnUser ? userLocation : null} />
+        <MapCenterController center={mapCenter} />
 
         {/* User location marker and accuracy circle */}
-        {userLocation && (
-          <>
-            <Circle
-              center={userLocation}
-              radius={50}
-              pathOptions={{
-                fillColor: '#4285F4',
-                fillOpacity: 0.15,
-                color: '#4285F4',
-                weight: 2,
-                opacity: 0.4,
-              }}
-            />
-            <Marker position={userLocation} icon={userLocationIcon} />
-          </>
-        )}
+        {userLocation && <UserLocationMarker position={userLocation} />}
 
-        {lines.map((line, index) => (
-          <div key={line.id}>
-            <BusMarker line={line} hidden={!visibleRoutes[index]} routeCoordinatesStore={routeCoordinatesStore} />
-            {line.stops.map((stop, stopIndex) => (
-              <StopMarker key={`${line.id}-${stopIndex}`} stop={stop} line={line} isVisible={visibleRoutes[index]} />
-            ))}
-          </div>
-        ))}
+        {/* Route markers (buses and stops) */}
+        <RouteMarkers lines={lines} visibleRoutes={visibleRoutes} routeCoordinatesStore={routeCoordinatesStore} />
       </MapContainer>
 
-      {/* Location button - with safe area padding */}
-      <motion.button
-        onClick={requestUserLocation}
-        disabled={isLoadingLocation}
-        className="absolute z-[1000] bg-white hover:bg-gray-50 disabled:bg-gray-100 p-3 rounded-lg shadow-lg transition-all"
-        style={{
-          top: 'max(1rem, env(safe-area-inset-top) + 0.5rem)',
-          right: '1rem',
-        }}
-        title="Show my location"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {isLoadingLocation ? (
-          <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
-        ) : (
-          <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-            />
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-          </svg>
-        )}
-      </motion.button>
+      {/* UI Controls */}
+      <UserLocationButton onClick={requestLocation} isLoading={isLoadingLocation} />
 
       <Disclaimer />
 
       <LanguageSwitch />
 
-      {/* Location error message - with safe area padding */}
-      {locationError && (
-        <div
-          className="absolute z-[1000] bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg max-w-xs right-4"
-          style={{
-            top: 'max(5rem, env(safe-area-inset-top) + 4.5rem)',
-          }}
-        >
-          {locationError}
-        </div>
-      )}
+      {/* Location error message */}
+      <LocationErrorMessage error={locationError} onDismiss={clearError} />
 
+      {/* Routes panel */}
       <RoutesPanel visibleRoutes={visibleRoutes} setVisibleRoutes={setVisibleRoutes} />
     </div>
   );

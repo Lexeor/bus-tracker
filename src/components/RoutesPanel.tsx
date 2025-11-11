@@ -20,13 +20,13 @@ const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes }) 
         <h3>{i18n._('busLines')}</h3>
         <div className="flex gap-2 justify-center">
           <button
-            onClick={() => setVisibleRoutes((prev: boolean[]) => [!prev[0], prev[1]])}
+            onClick={() => setVisibleRoutes((prev: boolean[]) => [!prev[0], false])}
             className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[0] ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-600'}`}
           >
             1
           </button>
           <button
-            onClick={() => setVisibleRoutes((prev: boolean[]) => [prev[0], !prev[1]])}
+            onClick={() => setVisibleRoutes((prev: boolean[]) => [false, !prev[1]])}
             className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-600'}`}
           >
             2
