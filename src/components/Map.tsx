@@ -2,17 +2,20 @@ import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
 import { motion } from 'motion/react';
 import { type FC, useEffect, useRef, useState } from 'react';
-import { Circle, MapContainer, Marker, TileLayer, useMap } from 'react-leaflet';
+import { Circle, MapContainer, Marker, ScaleControl, TileLayer, useMap } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
 import BusMarker from '../components/BusMarker';
 import Disclaimer from '../components/Disclaimer.tsx';
+import LanguageSwitch from '../components/LanguageSwitch';
 import StopMarker from '../components/StopMarker';
-import { defaultCenter, VISIBLE_ROUTES_KEY } from '../constants.ts';
-import { lines } from '../data.ts';
+import { defaultCenter, LANGUAGE_KEY, VISIBLE_ROUTES_KEY } from '../constants';
+import { lines } from '../data';
 import { useLocalStorageBooleanArray } from '../hooks/use-local-storage';
+import { activateLocale } from '../i18n';
 import type { RouteCoordinates } from '../utils';
-import { userLocationIcon } from './UserLocationIcon.tsx';
+import RoutesPanel from './RoutesPanel';
+import { userLocationIcon } from './UserLocationIcon';
 
 dayjs.extend(customParseFormat);
 
@@ -34,13 +37,21 @@ const MapCenterController: FC<{ center: [number, number] | null }> = ({ center }
 
 // Main Map Component
 const Map: FC = () => {
-  const [visibleRoutes, setVisibleRoutes] = useLocalStorageBooleanArray(VISIBLE_ROUTES_KEY, [true, true]);
+  const [visibleRoutes, setVisibleRoutes] = useLocalStorageBooleanArray(VISIBLE_ROUTES_KEY, [false, false]);
 
   const [userLocation, setUserLocation] = useState<[number, number] | null>(null);
   const [locationError, setLocationError] = useState<string | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState<boolean>(false);
   const [shouldCenterOnUser, setShouldCenterOnUser] = useState<boolean>(false);
   const watchIdRef = useRef<number | null>(null);
+
+  const language = localStorage.getItem(LANGUAGE_KEY) || 'en';
+
+  useEffect(() => {
+    if (language) {
+      activateLocale(language.replaceAll('"', ''));
+    }
+  }, [language]);
 
   // Request user location
   const requestUserLocation = (): void => {
@@ -125,6 +136,8 @@ const Map: FC = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
+        <ScaleControl position="bottomright" />
+
         {/* Center map on user location when requested */}
         <MapCenterController center={shouldCenterOnUser ? userLocation : null} />
 
@@ -186,6 +199,8 @@ const Map: FC = () => {
 
       <Disclaimer />
 
+      <LanguageSwitch />
+
       {/* Location error message - with safe area padding */}
       {locationError && (
         <div
@@ -198,31 +213,7 @@ const Map: FC = () => {
         </div>
       )}
 
-      {/* Route visibility toggles - with safe area padding */}
-      <div
-        className="absolute left-0 right-0 flex justify-center px-4 z-[1000] text-black"
-        style={{
-          bottom: 'max(1rem, env(safe-area-inset-bottom) + 0.5rem)',
-        }}
-      >
-        <div className="bg-white/40 backdrop-blur-sm rounded-sm p-4 pt-2 w-full md:w-auto text-center">
-          <h3>Autobuske linije</h3>
-          <div className="flex gap-2 justify-center">
-            <button
-              onClick={() => setVisibleRoutes((prev: boolean[]) => [!prev[0], prev[1]])}
-              className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[0] ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-600'}`}
-            >
-              1
-            </button>
-            <button
-              onClick={() => setVisibleRoutes((prev: boolean[]) => [prev[0], !prev[1]])}
-              className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-600'}`}
-            >
-              2
-            </button>
-          </div>
-        </div>
-      </div>
+      <RoutesPanel visibleRoutes={visibleRoutes} setVisibleRoutes={setVisibleRoutes} />
     </div>
   );
 };

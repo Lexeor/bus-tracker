@@ -1,0 +1,49 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-11-11 10:15+0100\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ru\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. js-lingui-explicit-id
+#: src/components/StopMarker.tsx:82
+msgid "nextBuses"
+msgstr "Следующие автобусы"
+
+#. js-lingui-explicit-id
+#: src/components/StopMarker.tsx:84
+msgid "noBuses"
+msgstr "Нет автобусов в ближайшее время."
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:20
+msgid "busLines"
+msgstr "Автобусные линии"
+
+#. js-lingui-explicit-id
+#: src/components/Disclaimer.tsx:77
+msgid "warning"
+msgstr "Обратите внимание"
+
+#. js-lingui-explicit-id
+#: src/components/Disclaimer.tsx:77
+msgid "locationWarning"
+msgstr "Местоположение транспорта на карте рассчитывается на основе статичного расписания и не привязано к реальному GPS-положению автобуса на маршруте."
+
+#. js-lingui-explicit-id
+#: src/components/Disclaimer.tsx:79
+msgid "information"
+msgstr "Информация предоставлена исключительно в ознакомительных целях."
+
+#. js-lingui-explicit-id
+#: src/components/Disclaimer.tsx:80
+msgid "refreshPage"
+msgstr "Если что-то не работает - обновите страницу"

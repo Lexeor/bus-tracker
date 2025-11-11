@@ -1,25 +1,34 @@
-import { CircleQuestionMarkIcon, XIcon } from 'lucide-react';
+import { useLingui } from '@lingui/react';
+import { GB, ME, RU } from 'country-flag-icons/react/3x2';
+import { CircleQuestionMarkIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { type FC, useEffect } from 'react';
-import { DISCLAIMER_STORAGE_KEY } from '../constants.ts';
+import Multilingual from '../components/Multilingual';
+import {
+  DISCLAIMER_STORAGE_KEY,
+  FIRST_LANGUAGE_SELECTED_STORAGE_KEY,
+  SHOW_DISCLAIMER_STORAGE_KEY,
+} from '../constants.ts';
 import { useLocalStorage } from '../hooks/use-local-storage';
+import { activateLocale } from '../i18n.ts';
 
 interface DisclaimerProps {}
 
 const Disclaimer: FC<DisclaimerProps> = () => {
+  const { i18n } = useLingui();
+
   const [disclaimerSeen, setDisclaimerSeen] = useLocalStorage<boolean>(DISCLAIMER_STORAGE_KEY, false);
-  const [show, setShow] = useLocalStorage<boolean>('disclaimer_show', false);
+  const [firstLanguageSelected, setFirstLanguageSelected] = useLocalStorage<boolean>(
+    FIRST_LANGUAGE_SELECTED_STORAGE_KEY,
+    false,
+  );
+  const [show, setShow] = useLocalStorage<boolean>(SHOW_DISCLAIMER_STORAGE_KEY, false);
 
   useEffect(() => {
     if (!disclaimerSeen) {
       setShow(true);
     }
   }, [disclaimerSeen, setShow]);
-
-  const handleClose = (): void => {
-    setDisclaimerSeen(true);
-    setShow(false);
-  };
 
   const handleToggle = (): void => {
     setShow((prev: boolean) => !prev);
@@ -40,7 +49,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
       <AnimatePresence>
         {show && (
           <motion.div
-            className="absolute top-32 left-4 right-4 bottom-32 z-[999] rounded-lg transition-all"
+            className="absolute top-32 left-4 right-4 bottom-32 z-[1001] rounded-lg transition-all"
             initial={{
               opacity: 0,
               scale: 0,
@@ -57,28 +66,82 @@ const Disclaimer: FC<DisclaimerProps> = () => {
               duration: 0.2,
             }}
           >
-            <div className="max-w-[600px] bg-white/80 p-3 rounded-lg shadow-lg backdrop-blur-sm mx-auto text-black">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-xl font-semibold text-center! w-full">⚠️ Važna informacija ⚠️</h2>
+            {firstLanguageSelected ? (
+              <div className="max-w-[600px] bg-white/80 p-6 rounded-lg shadow-lg backdrop-blur-sm mx-auto text-neutral-600 flex flex-col gap-2">
+                <p>
+                  <strong>{i18n._('warning')}:</strong> {i18n._('locationWarning')}
+                </p>
+                <p className="text-gray-600">{i18n._('information')}</p>
+                <p className="text-red-500 font-bold">{i18n._('refreshPage')} 🔄</p>
+
                 <button
-                  onClick={handleClose}
-                  className="text-gray-500 hover:text-gray-700 transition-colors"
-                  aria-label="Затворити"
+                  type="button"
+                  className="px-4 py-1 rounded-sm bg-blue-500 text-white min-w-24"
+                  onClick={() => {
+                    setShow(false);
+                    setDisclaimerSeen(true);
+                  }}
                 >
-                  <XIcon />
+                  Ok
                 </button>
               </div>
-              <p className="font-semibold text-lg"></p>
-              <p>Ovaj projekat je lični razvoj i nalazi se u fazi Proof of Concept.</p>
-              <br />
-              <p>
-                <strong>Obratite pažnju:</strong> pozicija vozila na mapi se izračunava na osnovu statičkog reda vožnje
-                i nije povezana sa realnom GPS pozicijom autobusa na ruti.
-              </p>
-              <br />
-              <p className="text-gray-600">Koristite informacije samo u informativne svrhe.</p>
-              <p className="text-red-500 font-bold">Ako nešto ne radi - osvježite stranicu 🔄</p>
-            </div>
+            ) : (
+              <div className="max-w-[600px] bg-white/80 p-6 rounded-lg shadow-lg backdrop-blur-sm mx-auto text-neutral-600">
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-xl font-semibold text-center! w-full">
+                    <Multilingual values={['Dobro došli!', 'Welcome!', 'Добро пожаловать!']} />
+                  </h2>
+                </div>
+                {/*<p>Ovaj projekat je lični razvoj i nalazi se u fazi Proof of Concept.</p>*/}
+                <div className="text-center">
+                  <Multilingual
+                    values={[
+                      'Izaberite jezik interfejsa',
+                      'Please select interface language',
+                      'Выберите язык интерфейса',
+                    ]}
+                  />
+                </div>
+                <div className="flex flex-row gap-4 items-center justify-center my-2">
+                  <button
+                    className="p-0 rounded bg-transparent"
+                    onClick={() => {
+                      setFirstLanguageSelected(true);
+                      activateLocale('me');
+                    }}
+                  >
+                    <ME className="w-12 border-3 border-neutral-100 hover:border-neutral-200 active:border-green-700/40 transition-colors duration-300" />
+                  </button>
+                  <button
+                    className="p-0 rounded bg-transparent"
+                    onClick={() => {
+                      setFirstLanguageSelected(true);
+                      activateLocale('en');
+                    }}
+                  >
+                    <GB className="w-12 border-3 border-neutral-100 hover:border-neutral-200 active:border-green-700/40 transition-colors duration-300" />
+                  </button>
+                  <button
+                    className="p-0 rounded bg-transparent"
+                    onClick={() => {
+                      setFirstLanguageSelected(true);
+                      activateLocale('ru');
+                    }}
+                  >
+                    <RU className="w-12 border-3 border-neutral-100 hover:border-neutral-200 active:border-green-700/40 transition-colors duration-300" />
+                  </button>
+                </div>
+                <div className="text-center text-sm ">
+                  <Multilingual
+                    values={[
+                      'Možete uvijek promijenit ovu postavku kasnije',
+                      'You can always change this setting later',
+                      'Вы сможете изменить это позже',
+                    ]}
+                  />
+                </div>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

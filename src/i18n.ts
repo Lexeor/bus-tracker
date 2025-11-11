@@ -1,0 +1,13 @@
+import { i18n } from '@lingui/core';
+
+export const locales = {
+  ru: 'Русский',
+  en: 'English',
+  me: 'Deutsch',
+};
+
+export async function activateLocale(locale: any) {
+  const { messages } = await import(`./locales/${locale}.po`);
+  i18n.load(locale, messages);
+  i18n.activate(locale);
+}
