@@ -1,7 +1,15 @@
+import { useLingui } from '@lingui/react';
 import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
-import { calculateNextBuses, formatTimeUntil, getCurrentTimeInSeconds, type Line, type NextBusInfo, type Stop } from '../utils';
+import {
+  calculateNextBuses,
+  formatTimeUntil,
+  getCurrentTimeInSeconds,
+  type Line,
+  type NextBusInfo,
+  type Stop,
+} from '../utils';
 
 // Custom stop icon
 const createStopIcon = (color: string, isSelected: boolean = false) => {
@@ -33,6 +41,8 @@ const StopMarker: FC<{
   isVisible: boolean;
   onStopClick?: (stop: Stop, line: Line) => void;
 }> = ({ stop, line, isVisible, onStopClick }) => {
+  const { i18n } = useLingui();
+
   const [nextBuses, setNextBuses] = useState<NextBusInfo[]>([]);
 
   useEffect(() => {
@@ -61,25 +71,38 @@ const StopMarker: FC<{
     >
       <Popup closeButton={false}>
         <div className="min-w-[200px] pt-6!">
-          <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-0.5 text-center" style={{ backgroundColor: line.color }}>
+          <h3
+            className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-0.5 text-center"
+            style={{ backgroundColor: line.color }}
+          >
             {stop.name}
           </h3>
 
           <div>
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">Autobusi u blizini vremena:</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">{i18n._('nextBuses')}</h3>
             {nextBuses.length === 0 ? (
-              <p className="text-sm text-gray-500">Nema autobusa u bliskoj budućnosti.</p>
+              <p className="text-sm text-gray-500">{i18n._('noBuses')}</p>
             ) : (
               <div className="space-y-2">
                 {nextBuses.slice(0, 3).map((bus) => (
-                  <div key={`${bus.lineId}-${bus.busIndex}`} className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: `${bus.color}15` }}>
+                  <div
+                    key={`${bus.lineId}-${bus.busIndex}`}
+                    className="flex items-center justify-between p-2 rounded"
+                    style={{ backgroundColor: `${bus.color}15` }}
+                  >
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: bus.color }}>
+                      <div
+                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                        style={{ backgroundColor: bus.color }}
+                      >
                         {bus.lineId}
                       </div>
                       <span className="text-sm font-medium">{bus.scheduledTime}</span>
                     </div>
-                    <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
+                    <span
+                      className="text-sm font-semibold"
+                      style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}
+                    >
                       {bus.timeUntilArrival < 0 ? 'Сейчас' : formatTimeUntil(bus.timeUntilArrival)}
                     </span>
                   </div>
