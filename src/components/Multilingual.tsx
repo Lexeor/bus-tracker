@@ -7,7 +7,7 @@ interface MultilingualProps {
   selectedLanguage?: number;
 }
 
-const Multilingual: FC<MultilingualProps> = ({ values, interval = 3000, selectedLanguage }) => {
+const Multilingual: FC<MultilingualProps> = ({ values, interval = 5000, selectedLanguage }) => {
   const [currentIndex, setCurrentIndex] = useState<number>(0);
 
   useEffect(() => {
