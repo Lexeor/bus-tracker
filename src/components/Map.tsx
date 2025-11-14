@@ -2,6 +2,7 @@ import Disclaimer from '@/components/Disclaimer';
 import LanguageSwitch from '@/components/LanguageSwitch';
 import LocationErrorMessage from '@/components/LocationErrorMessage';
 import MapCenterController from '@/components/MapCenterController';
+import RouteFocusController from '@/components/RouteFocusController';
 import RouteMarkers from '@/components/RouteMarkers';
 import UserLocationButton from '@/components/UserLocationButton';
 import UserLocationMarker from '@/components/UserLocationMarker';
@@ -14,7 +15,7 @@ import { useLanguageInit } from '@/hooks/useLanguageInit';
 import { routeCoordinatesStore } from '@/store/routeCoordinatesStore';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { type FC, useMemo } from 'react';
+import { type FC, useMemo, useState } from 'react';
 import { MapContainer, ScaleControl, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
@@ -36,6 +37,9 @@ const Map: FC = () => {
     Array(lines.length).fill(false),
   );
 
+  // Focused route state
+  const [focusedRouteIndex, setFocusedRouteIndex] = useState<number | null>(null);
+
   // Initial routes flash effect (workaround for initial bus rendering)
   useInitialRoutesFlash(setVisibleRoutes, lines.length);
 
@@ -52,6 +56,12 @@ const Map: FC = () => {
   // Memoize center value to avoid unnecessary re-renders
   const mapCenter = useMemo(() => (shouldCenterOnUser ? userLocation : null), [shouldCenterOnUser, userLocation]);
 
+  // Get focused line data
+  const focusedLine = useMemo(() => {
+    if (focusedRouteIndex === null) return null;
+    return lines[focusedRouteIndex] || null;
+  }, [focusedRouteIndex]);
+
   return (
     <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
       <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false}>
@@ -64,6 +74,9 @@ const Map: FC = () => {
 
         {/* Center map on user location when requested */}
         <MapCenterController center={mapCenter} />
+
+        {/* Focus on selected route */}
+        <RouteFocusController focusedLine={focusedLine} />
 
         {/* User location marker and accuracy circle */}
         {userLocation && <UserLocationMarker position={userLocation} />}
@@ -82,8 +95,11 @@ const Map: FC = () => {
       {/* Location error message */}
       <LocationErrorMessage error={locationError} onDismiss={clearError} />
 
-      {/* Routes panel */}
-      <RoutesPanel visibleRoutes={visibleRoutes} setVisibleRoutes={setVisibleRoutes} />
+      <RoutesPanel
+        visibleRoutes={visibleRoutes}
+        setVisibleRoutes={setVisibleRoutes}
+        onRouteFocus={setFocusedRouteIndex}
+      />
     </div>
   );
 };
