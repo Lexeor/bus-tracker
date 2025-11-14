@@ -31,15 +31,19 @@ const LanguageSwitch: FC<LanguageSwitchProps> = () => {
           setOpen((prev) => !prev);
         }
       }}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
       aria-label="Language switch"
     >
       {open ? (
         <>
-          {Array.from(Object.keys(languages)).map((lang) => (
-            <Fragment key={lang}>{languages[lang]}</Fragment>
-          ))}
+          <div className="relative">
+            <div className="relative z-2">{languages[currentLanguage]}</div>
+            <div className="absolute top-0 -left-3 -right-3 w-12 h-full bg-green-500/20 z-1">
+              <div className="absolute top-0 left-0 w-1 h-full bg-green-500 z-2"></div>
+            </div>
+          </div>
+          {Array.from(Object.keys(languages)).map((lang) =>
+            lang !== currentLanguage ? <Fragment key={lang}>{languages[lang]}</Fragment> : null,
+          )}
         </>
       ) : (
         <>{languages[currentLanguage]}</>
