@@ -86,14 +86,14 @@ const Disclaimer: FC<DisclaimerProps> = () => {
                 </button>
               </div>
             ) : (
-              <div className="max-w-[600px] bg-white/80 p-6 rounded-lg shadow-lg backdrop-blur-sm mx-auto text-neutral-600">
-                <div className="flex justify-between items-center mb-4">
+              <div className="fixed inset-0 flex flex-col gap-2 justify-center items-center bg-white/60 p-6 rounded-lg shadow-lg backdrop-blur-sm mx-auto text-neutral-600">
+                <div className="flex justify-between items-center mb-4 w-full">
                   <h2 className="text-xl font-semibold text-center! w-full">
                     <Multilingual values={['Dobro došli!', 'Welcome!', 'Добро пожаловать!']} />
                   </h2>
                 </div>
                 {/*<p>Ovaj projekat je lični razvoj i nalazi se u fazi Proof of Concept.</p>*/}
-                <div className="text-center">
+                <div className="text-center w-full">
                   <Multilingual
                     values={[
                       'Izaberite jezik interfejsa',
@@ -131,7 +131,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
                     <RU className="w-12 border-3 border-neutral-100 hover:border-neutral-200 active:border-green-700/40 transition-colors duration-300" />
                   </button>
                 </div>
-                <div className="text-center text-sm ">
+                <div className="text-center text-sm w-full">
                   <Multilingual
                     values={[
                       'Možete uvijek promijenit ovu postavku kasnije',
