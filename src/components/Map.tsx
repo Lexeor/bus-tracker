@@ -6,9 +6,9 @@ import RouteFocusController from '@/components/RouteFocusController';
 import RouteMarkers from '@/components/RouteMarkers';
 import UserLocationButton from '@/components/UserLocationButton';
 import UserLocationMarker from '@/components/UserLocationMarker';
-import { defaultCenter, VISIBLE_ROUTES_KEY } from '@/constants';
+import { defaultCenter, FOCUS_ON_ROUTES_KEY, VISIBLE_ROUTES_KEY } from '@/constants';
 import { lines } from '@/data';
-import { useLocalStorageBooleanArray } from '@/hooks/use-local-storage';
+import { useLocalStorage, useLocalStorageBooleanArray } from '@/hooks/use-local-storage';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useInitialRoutesFlash } from '@/hooks/useInitialRoutesFlash';
 import { useLanguageInit } from '@/hooks/useLanguageInit';
@@ -36,6 +36,9 @@ const Map: FC = () => {
     VISIBLE_ROUTES_KEY,
     Array(lines.length).fill(false),
   );
+
+  // Focus mode state
+  const [focusOnRoutes, setFocusOnRoutes] = useLocalStorage<boolean>(FOCUS_ON_ROUTES_KEY, true);
 
   // Focused route state
   const [focusedRouteIndex, setFocusedRouteIndex] = useState<number | null>(null);
@@ -76,7 +79,7 @@ const Map: FC = () => {
         <MapCenterController center={mapCenter} />
 
         {/* Focus on selected route */}
-        <RouteFocusController focusedLine={focusedLine} />
+        <RouteFocusController focusedLine={focusOnRoutes ? focusedLine : null} />
 
         {/* User location marker and accuracy circle */}
         {userLocation && <UserLocationMarker position={userLocation} />}
@@ -99,6 +102,8 @@ const Map: FC = () => {
         visibleRoutes={visibleRoutes}
         setVisibleRoutes={setVisibleRoutes}
         onRouteFocus={setFocusedRouteIndex}
+        focusOnRoutes={focusOnRoutes}
+        onCenterToggle={() => setFocusOnRoutes((prev) => !prev)}
       />
     </div>
   );

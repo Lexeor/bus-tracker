@@ -1,14 +1,22 @@
 import { useLingui } from '@lingui/react';
-import { BusFrontIcon, ShipIcon } from 'lucide-react';
+import { BusFrontIcon, CrosshairIcon, ShipIcon } from 'lucide-react';
 import { type Dispatch, type FC, type SetStateAction } from 'react';
 
 interface RoutesPanelProps {
   visibleRoutes: any;
   setVisibleRoutes: Dispatch<SetStateAction<boolean[]>>;
   onRouteFocus?: (routeIndex: number | null) => void;
+  focusOnRoutes: boolean;
+  onCenterToggle: () => void;
 }
 
-const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, onRouteFocus }) => {
+const RoutesPanel: FC<RoutesPanelProps> = ({
+  visibleRoutes,
+  setVisibleRoutes,
+  onRouteFocus,
+  focusOnRoutes,
+  onCenterToggle,
+}) => {
   const { i18n } = useLingui();
 
   // TODO: Add normal rendering instead of this workaround
@@ -19,7 +27,10 @@ const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, on
         bottom: 'max(1rem, env(safe-area-inset-bottom) + 0.5rem)',
       }}
     >
-      <div className="bg-white/40 backdrop-blur-sm rounded-sm p-4 pt-2 w-full md:w-auto text-center">
+      <div className="relative bg-white/40 backdrop-blur-sm rounded-sm p-4 pt-2 w-full md:w-auto text-center">
+        <button className="absolute top-2.5 right-2.5" onClick={onCenterToggle}>
+          <CrosshairIcon size={18} className={focusOnRoutes ? 'text-blue-500' : 'text-gray-600'} />
+        </button>
         <h3>{i18n._('busLines')}</h3>
         <div className="flex gap-2 justify-center items-center">
           <BusFrontIcon />
