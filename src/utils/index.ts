@@ -40,8 +40,15 @@ export interface NextBusInfo {
   scheduledTime: string;
 }
 
+export interface RouteGeometryData {
+  coordinates: L.LatLng[];
+  cumulativeDistances: number[];
+  totalDistance: number;
+  stopAnchors: number[];
+}
+
 export interface RouteCoordinates {
-  [lineId: number]: L.LatLng[];
+  [lineId: number]: RouteGeometryData | undefined;
 }
 
 // Utils
@@ -64,29 +71,30 @@ export const formatTimeUntil = (seconds: number): string => {
   return `${hours}s ${mins}m`;
 };
 
-// Calculate angle between two points
-export const calculateAngle = (lat1: number, lng1: number, lat2: number, lng2: number): number => {
-  const dLng = lng2 - lng1;
-  const dLat = lat2 - lat1;
-  const angle = Math.atan2(dLng, dLat) * (180 / Math.PI);
-  return angle;
+const clampProgress = (value: number) => Math.max(0, Math.min(1, value));
+
+const toRadians = (value: number) => (value * Math.PI) / 180;
+const toDegrees = (value: number) => (value * 180) / Math.PI;
+
+export const calculateBearing = (from: L.LatLng, to: L.LatLng): number => {
+  const φ1 = toRadians(from.lat);
+  const φ2 = toRadians(to.lat);
+  const Δλ = toRadians(to.lng - from.lng);
+
+  const y = Math.sin(Δλ) * Math.cos(φ2);
+  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
+  const θ = Math.atan2(y, x);
+
+  return (toDegrees(θ) + 360) % 360;
 };
 
-// Find closest point on route and calculate direction
-export const findClosestPointWithDirection = (
-  targetLat: number,
-  targetLng: number,
-  routeCoordinates: L.LatLng[],
-): {
-  index: number;
-  rotation: number;
-} => {
+const findClosestCoordinateIndex = (target: L.LatLng, coordinates: L.LatLng[]): number => {
   let closestIndex = 0;
   let minDistance = Infinity;
 
-  for (let i = 0; i < routeCoordinates.length; i++) {
-    const coord = routeCoordinates[i];
-    const distance = Math.sqrt(Math.pow(coord.lat - targetLat, 2) + Math.pow(coord.lng - targetLng, 2));
+  for (let i = 0; i < coordinates.length; i++) {
+    const coord = coordinates[i];
+    const distance = target.distanceTo(coord);
 
     if (distance < minDistance) {
       minDistance = distance;
@@ -94,52 +102,124 @@ export const findClosestPointWithDirection = (
     }
   }
 
-  // Calculate rotation based on direction to next point
-  let rotation = 0;
-  if (closestIndex < routeCoordinates.length - 1) {
-    const current = routeCoordinates[closestIndex];
-    const next = routeCoordinates[closestIndex + 1];
-    rotation = calculateAngle(current.lat, current.lng, next.lat, next.lng);
-  } else if (closestIndex > 0) {
-    // If at the end, use direction from previous point
-    const prev = routeCoordinates[closestIndex - 1];
-    const current = routeCoordinates[closestIndex];
-    rotation = calculateAngle(prev.lat, prev.lng, current.lat, current.lng);
-  }
-
-  return { index: closestIndex, rotation };
+  return closestIndex;
 };
 
-// Interpolate along route with rotation
-export const interpolateAlongRouteWithRotation = (
-  routeCoordinates: L.LatLng[],
-  fromIndex: number,
-  toIndex: number,
-  progress: number,
+export const buildRouteGeometry = (coordinates: L.LatLng[], stops: Stop[]): RouteGeometryData => {
+  const cumulativeDistances: number[] = [0];
+
+  for (let i = 1; i < coordinates.length; i++) {
+    const prev = coordinates[i - 1];
+    const current = coordinates[i];
+    const distance = prev.distanceTo(current);
+    cumulativeDistances[i] = cumulativeDistances[i - 1] + distance;
+  }
+
+  const totalDistance = cumulativeDistances[cumulativeDistances.length - 1] ?? 0;
+  const stopAnchors = stops.map((stop) => {
+    const stopPoint = L.latLng(stop.lat, stop.lng);
+    return findClosestCoordinateIndex(stopPoint, coordinates);
+  });
+
+  return {
+    coordinates,
+    cumulativeDistances,
+    totalDistance,
+    stopAnchors,
+  };
+};
+
+const deriveRotationForAnchor = (geometry: RouteGeometryData, anchorIndex: number): number => {
+  const { coordinates } = geometry;
+
+  if (!coordinates.length) {
+    return 0;
+  }
+
+  const current = coordinates[anchorIndex];
+
+  if (!current) {
+    return 0;
+  }
+
+  if (anchorIndex < coordinates.length - 1) {
+    return calculateBearing(current, coordinates[anchorIndex + 1]);
+  }
+
+  if (anchorIndex > 0) {
+    return calculateBearing(coordinates[anchorIndex - 1], current);
+  }
+
+  return 0;
+};
+
+export const getRotationForAnchor = (geometry: RouteGeometryData, anchorIndex: number): number => {
+  return deriveRotationForAnchor(geometry, anchorIndex);
+};
+
+export const interpolateBetweenAnchors = (
+  geometry: RouteGeometryData,
+  fromAnchor: number,
+  toAnchor: number,
+  rawProgress: number,
 ): {
   position: [number, number];
   rotation: number;
 } | null => {
-  if (!routeCoordinates || routeCoordinates.length === 0) return null;
+  const { coordinates, cumulativeDistances } = geometry;
 
-  const totalSegment = toIndex - fromIndex;
-  const targetIndex = Math.floor(fromIndex + totalSegment * progress);
-  const clampedIndex = Math.max(0, Math.min(routeCoordinates.length - 1, targetIndex));
-
-  const coord = routeCoordinates[clampedIndex];
-
-  // Calculate rotation
-  let rotation = 0;
-  if (clampedIndex < routeCoordinates.length - 1) {
-    const next = routeCoordinates[clampedIndex + 1];
-    rotation = calculateAngle(coord.lat, coord.lng, next.lat, next.lng);
-  } else if (clampedIndex > 0) {
-    const prev = routeCoordinates[clampedIndex - 1];
-    rotation = calculateAngle(prev.lat, prev.lng, coord.lat, coord.lng);
+  if (!coordinates.length) {
+    return null;
   }
 
+  const fromDistance = cumulativeDistances[fromAnchor];
+  const toDistance = cumulativeDistances[toAnchor];
+
+  if (fromDistance === undefined || toDistance === undefined) {
+    return null;
+  }
+
+  const distanceDelta = toDistance - fromDistance;
+
+  if (distanceDelta === 0) {
+    const anchorCoord = coordinates[fromAnchor];
+    return {
+      position: [anchorCoord.lat, anchorCoord.lng],
+      rotation: deriveRotationForAnchor(geometry, fromAnchor),
+    };
+  }
+
+  if (distanceDelta < 0) {
+    return null;
+  }
+
+  const progress = clampProgress(rawProgress);
+  const targetDistance = fromDistance + distanceDelta * progress;
+
+  let segmentIndex = fromAnchor;
+
+  while (
+    segmentIndex < toAnchor &&
+    cumulativeDistances[segmentIndex + 1] !== undefined &&
+    cumulativeDistances[segmentIndex + 1] < targetDistance
+  ) {
+    segmentIndex++;
+  }
+
+  const nextIndex = Math.min(segmentIndex + 1, coordinates.length - 1);
+  const startCoord = coordinates[segmentIndex];
+  const endCoord = coordinates[nextIndex];
+  const startDistance = cumulativeDistances[segmentIndex];
+  const endDistance = cumulativeDistances[nextIndex];
+  const segmentLength = Math.max(endDistance - startDistance, 1);
+  const segmentProgress = Math.max(0, Math.min(1, (targetDistance - startDistance) / segmentLength));
+
+  const lat = startCoord.lat + (endCoord.lat - startCoord.lat) * segmentProgress;
+  const lng = startCoord.lng + (endCoord.lng - startCoord.lng) * segmentProgress;
+  const rotation = calculateBearing(startCoord, endCoord);
+
   return {
-    position: [coord.lat, coord.lng],
+    position: [lat, lng],
     rotation,
   };
 };

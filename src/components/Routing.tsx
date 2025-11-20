@@ -1,4 +1,5 @@
-import type { RouteCoordinates, Stop } from '@/utils';
+import type { RouteGeometryData, RouteCoordinates, Stop } from '@/utils';
+import { buildRouteGeometry } from '@/utils';
 import L from 'leaflet';
 import { type FC, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
@@ -9,7 +10,7 @@ interface RoutingProps {
   stops: Stop[];
   color: string;
   lineId: number;
-  onRouteReady: (coordinates: L.LatLng[]) => void;
+  onRouteReady: (geometry: RouteGeometryData) => void;
   hidden?: boolean;
   routeCoordinatesStore: RouteCoordinates;
 }
@@ -58,24 +59,24 @@ const Routing: FC<RoutingProps> = ({ stops, color, lineId, onRouteReady, hidden,
 
       // But notify parent if we have cached data
       if (routeCoordinatesStore[lineId]) {
-        onRouteReady(routeCoordinatesStore[lineId]);
+        onRouteReady(routeCoordinatesStore[lineId]!);
       }
       return;
     }
 
     // Check if we have cached coordinates
-    const cachedCoordinates = routeCoordinatesStore[lineId];
+    const cachedGeometry = routeCoordinatesStore[lineId];
 
-    if (cachedCoordinates && cachedCoordinates.length > 0) {
+    if (cachedGeometry && cachedGeometry.coordinates.length > 0) {
       // Use cached data - just draw a polyline
       try {
-        polylineRef.current = L.polyline(cachedCoordinates, {
+        polylineRef.current = L.polyline(cachedGeometry.coordinates, {
           color,
           weight: 4,
           opacity: 0.6,
         }).addTo(map);
 
-        onRouteReady(cachedCoordinates);
+        onRouteReady(cachedGeometry);
       } catch (error) {
         console.error('Error creating polyline from cache:', error);
       }
@@ -105,10 +106,10 @@ const Routing: FC<RoutingProps> = ({ stops, color, lineId, onRouteReady, hidden,
           if (routes?.[0]?.coordinates) {
             const coordinates: L.LatLng[] = routes[0].coordinates;
 
-            // Cache the coordinates
-            routeCoordinatesStore[lineId] = coordinates;
+            const geometry = buildRouteGeometry(coordinates, stops);
+            routeCoordinatesStore[lineId] = geometry;
 
-            onRouteReady(coordinates);
+            onRouteReady(geometry);
           }
         });
 
