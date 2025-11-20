@@ -5,6 +5,20 @@ import { useEffect } from 'react';
  * Hook to handle initial routes visibility flash
  * This is a workaround to force initial bus markers to render
  */
+const INITIAL_LOADING_CLASS = 'initial-routes-loading';
+
+const addInitialLoadingClass = () => {
+  if (typeof document !== 'undefined') {
+    document.body.classList.add(INITIAL_LOADING_CLASS);
+  }
+};
+
+const removeInitialLoadingClass = () => {
+  if (typeof document !== 'undefined') {
+    document.body.classList.remove(INITIAL_LOADING_CLASS);
+  }
+};
+
 export const useInitialRoutesFlash = (setVisibleRoutes: (routes: boolean[]) => void, routesCount: number): void => {
   useEffect(() => {
     if (routesCount === 0) return;
@@ -38,6 +52,7 @@ export const useInitialRoutesFlash = (setVisibleRoutes: (routes: boolean[]) => v
       if (!hideTimer) {
         hideTimer = setTimeout(() => {
           setVisibleRoutes(allHidden);
+          removeInitialLoadingClass();
           clearTimers();
         }, HIDE_DELAY_MS);
       }
@@ -54,12 +69,16 @@ export const useInitialRoutesFlash = (setVisibleRoutes: (routes: boolean[]) => v
       }
     };
 
+    addInitialLoadingClass();
     setVisibleRoutes(allVisible);
     checkReadyState();
 
     checkInterval = setInterval(checkReadyState, CHECK_INTERVAL_MS);
     maxWaitTimer = setTimeout(hideRoutes, MAX_WAIT_MS);
 
-    return clearTimers;
+    return () => {
+      removeInitialLoadingClass();
+      clearTimers();
+    };
   }, [setVisibleRoutes, routesCount]);
 };

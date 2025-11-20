@@ -55,7 +55,7 @@ const RoutesPanel: FC<RoutesPanelProps> = ({
               onRouteFocus?.(1);
               setVisibleRoutes((prev: boolean[]) => [false, !prev[1], false, false]);
             }}
-            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-blue-700 text-white' : 'bg-gray-200 text-gray-600'}`}
+            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-[#01579b] text-white' : 'bg-gray-200 text-gray-600'}`}
           >
             2
           </button>
