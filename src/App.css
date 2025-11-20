@@ -28,6 +28,14 @@ button {
   /*display: none !important;*/
 }
 
+body.initial-routes-loading .leaflet-overlay-pane path.leaflet-interactive {
+  opacity: 0 !important;
+}
+
+body.initial-routes-loading .leaflet-marker-pane .stop-marker-icon {
+  opacity: 0 !important;
+}
+
 .bus-icon {
   width: 30px;
   height: 30px;

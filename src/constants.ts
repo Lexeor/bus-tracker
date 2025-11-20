@@ -10,3 +10,5 @@ export const SHOW_DISCLAIMER_STORAGE_KEY = 'busapp-disclaimer-show';
 export const LANGUAGE_KEY = 'busapp-lang';
 
 export const FIRST_LANGUAGE_SELECTED_STORAGE_KEY = 'busapp-first-language-selected';
+
+export const FOCUS_ON_ROUTES_KEY = 'busapp-focus-on-routes';

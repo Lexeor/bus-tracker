@@ -14,22 +14,17 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:242
-msgid "bus"
-msgstr "Bus"
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.on"
+msgstr "Focus on routes activated"
 
 #. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:242
-msgid "ferry"
-msgstr "Ferry"
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.off"
+msgstr "Focus on routes deactivated"
 
 #. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:242
-msgid "line"
-msgstr "Line"
-
-#. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:21
+#: src/components/RoutesPanel.tsx:41
 msgid "busLines"
 msgstr "Transport lines"
 
@@ -42,6 +37,21 @@ msgstr "Next buses"
 #: src/components/StopMarker.tsx:84
 msgid "noBuses"
 msgstr "No buses in the near future."
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:249
+msgid "bus"
+msgstr "Bus"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:249
+msgid "ferry"
+msgstr "Ferry"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:249
+msgid "line"
+msgstr "Line"
 
 #. js-lingui-explicit-id
 #: src/components/Disclaimer.tsx:72

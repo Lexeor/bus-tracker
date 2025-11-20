@@ -14,22 +14,17 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:242
-msgid "bus"
-msgstr "Autobus"
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.on"
+msgstr "Fokus na rute je aktiviran"
 
 #. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:242
-msgid "ferry"
-msgstr "Trajekt"
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.off"
+msgstr "Fokus na rute je deaktiviran"
 
 #. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:242
-msgid "line"
-msgstr "Linija"
-
-#. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:21
+#: src/components/RoutesPanel.tsx:41
 msgid "busLines"
 msgstr "Transportne linije"
 
@@ -42,6 +37,21 @@ msgstr "Autobusi u blizini vremena:"
 #: src/components/StopMarker.tsx:84
 msgid "noBuses"
 msgstr "Nema autobusa u bliskoj budućnosti."
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:249
+msgid "bus"
+msgstr "Autobus"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:249
+msgid "ferry"
+msgstr "Trajekt"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:249
+msgid "line"
+msgstr "Linija"
 
 #. js-lingui-explicit-id
 #: src/components/Disclaimer.tsx:72

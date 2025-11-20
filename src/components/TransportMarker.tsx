@@ -1,10 +1,11 @@
 import {
-  findClosestPointWithDirection,
   getCurrentTimeInSeconds,
-  interpolateAlongRouteWithRotation,
+  getRotationForAnchor,
+  interpolateBetweenAnchors,
   type Line,
   parseTimeToSeconds,
   type RouteCoordinates,
+  type RouteGeometryData,
   type TransportPosition,
 } from '@/utils';
 import { useLingui } from '@lingui/react';
@@ -116,19 +117,21 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
   const [routeReady, setRouteReady] = useState(false);
   const { i18n } = useLingui();
 
-  const handleRouteReady = () => {
+  const handleRouteReady = (_geometry: RouteGeometryData) => {
     setRouteReady(true);
   };
 
   useEffect(() => {
-    if (!routeReady || !routeCoordinatesStore[line.id]) {
+    const routeGeometry = routeCoordinatesStore[line.id];
+
+    if (!routeReady || !routeGeometry) {
       return;
     }
 
     const updatePositions = () => {
       const currentTime = getCurrentTimeInSeconds();
-      const routeCoords = routeCoordinatesStore[line.id];
       const positions: TransportPosition[] = [];
+      const { stopAnchors } = routeGeometry;
 
       // Calculate bus positions with rotation
       const busCount = line.stops[0].time.length;
@@ -155,10 +158,14 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
             const elapsedTime = currentTime - currentStopTime;
             const progress = totalTime > 0 ? elapsedTime / totalTime : 0;
 
-            const fromPoint = findClosestPointWithDirection(currentStop.lat, currentStop.lng, routeCoords);
-            const toPoint = findClosestPointWithDirection(nextStop.lat, nextStop.lng, routeCoords);
+            const fromAnchor = stopAnchors[stopIndex];
+            const toAnchor = stopAnchors[stopIndex + 1];
 
-            const result = interpolateAlongRouteWithRotation(routeCoords, fromPoint.index, toPoint.index, progress);
+            if (typeof fromAnchor !== 'number' || typeof toAnchor !== 'number') {
+              continue;
+            }
+
+            const result = interpolateBetweenAnchors(routeGeometry, fromAnchor, toAnchor, progress);
 
             if (result) {
               const currentTimeStr = dayjs().format('HH:mm:ss');
@@ -185,23 +192,23 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
         if (!found && currentTime >= lastStopTime - 60 && currentTime <= lastStopTime) {
           const lastStop = line.stops[line.stops.length - 1];
           const currentTimeStr = dayjs().format('HH:mm:ss');
+          const lastAnchor = stopAnchors[stopAnchors.length - 1];
 
-          // Calculate rotation for last stop
-          const lastStopPoint = findClosestPointWithDirection(lastStop.lat, lastStop.lng, routeCoords);
-
-          positions.push({
-            position: [lastStop.lat, lastStop.lng],
-            type: line.type,
-            rotation: lastStopPoint.rotation,
-            busIndex,
-            fromStop: lastStop.name,
-            toStop: 'Конечная остановка',
-            progress: 1,
-            isOnRoute: true,
-            departureTime: line.stops[0].time[busIndex],
-            arrivalTime: line.stops[line.stops.length - 1].time[busIndex],
-            currentTime: currentTimeStr,
-          });
+          if (typeof lastAnchor === 'number') {
+            positions.push({
+              position: [lastStop.lat, lastStop.lng],
+              type: line.type,
+              rotation: getRotationForAnchor(routeGeometry, lastAnchor),
+              busIndex,
+              fromStop: lastStop.name,
+              toStop: 'Конечная остановка',
+              progress: 1,
+              isOnRoute: true,
+              departureTime: line.stops[0].time[busIndex],
+              arrivalTime: line.stops[line.stops.length - 1].time[busIndex],
+              currentTime: currentTimeStr,
+            });
+          }
         }
       }
 
@@ -212,7 +219,7 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
     const interval = setInterval(updatePositions, 1000);
 
     return () => clearInterval(interval);
-  }, [line, routeReady, hidden]);
+  }, [line, routeReady, hidden, routeCoordinatesStore]);
 
   return (
     <>
