@@ -36,7 +36,7 @@ const LanguageSwitch: FC<LanguageSwitchProps> = () => {
       {open ? (
         <>
           <div className="relative">
-            <div className="relative z-2 h-6">{languages[currentLanguage]}</div>
+            <div className="relative z-2 h-6 w-6">{languages[currentLanguage]}</div>
             <div className="absolute -top-1 -bottom-1 -left-3 -right-3 w-12 h-8 bg-green-500/20 z-1">
               <div className="absolute top-0 left-0 w-1 h-full bg-green-500 z-2"></div>
             </div>
