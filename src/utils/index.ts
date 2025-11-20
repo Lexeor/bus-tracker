@@ -77,15 +77,15 @@ const toRadians = (value: number) => (value * Math.PI) / 180;
 const toDegrees = (value: number) => (value * 180) / Math.PI;
 
 export const calculateBearing = (from: L.LatLng, to: L.LatLng): number => {
-  const φ1 = toRadians(from.lat);
-  const φ2 = toRadians(to.lat);
-  const Δλ = toRadians(to.lng - from.lng);
+  const f1 = toRadians(from.lat);
+  const f2 = toRadians(to.lat);
+  const delta = toRadians(to.lng - from.lng);
 
-  const y = Math.sin(Δλ) * Math.cos(φ2);
-  const x = Math.cos(φ1) * Math.sin(φ2) - Math.sin(φ1) * Math.cos(φ2) * Math.cos(Δλ);
-  const θ = Math.atan2(y, x);
+  const y = Math.sin(delta) * Math.cos(f2);
+  const x = Math.cos(f1) * Math.sin(f2) - Math.sin(f1) * Math.cos(f2) * Math.cos(delta);
+  const bearing = Math.atan2(y, x);
 
-  return (toDegrees(θ) + 360) % 360;
+  return (toDegrees(bearing) + 360) % 360;
 };
 
 const findClosestCoordinateIndex = (target: L.LatLng, coordinates: L.LatLng[]): number => {
