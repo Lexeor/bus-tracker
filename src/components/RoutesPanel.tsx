@@ -1,6 +1,7 @@
 import { useLingui } from '@lingui/react';
 import { BusFrontIcon, CrosshairIcon, ShipIcon } from 'lucide-react';
 import { type Dispatch, type FC, type SetStateAction } from 'react';
+import { toast } from 'sonner';
 
 interface RoutesPanelProps {
   visibleRoutes: any;
@@ -28,7 +29,13 @@ const RoutesPanel: FC<RoutesPanelProps> = ({
       }}
     >
       <div className="relative bg-white/40 backdrop-blur-sm rounded-sm p-4 pt-2 w-full md:w-auto text-center">
-        <button className="absolute top-2.5 right-2.5" onClick={onCenterToggle}>
+        <button
+          className="absolute top-2.5 right-2.5"
+          onClick={() => {
+            toast(focusOnRoutes ? i18n._('focusOnRoutes.off') : i18n._('focusOnRoutes.on'));
+            onCenterToggle();
+          }}
+        >
           <CrosshairIcon size={18} className={focusOnRoutes ? 'text-blue-500' : 'text-gray-600'} />
         </button>
         <h3>{i18n._('busLines')}</h3>
