@@ -1,0 +1,9 @@
+**/.prettierignore
+**/.prettierrc.json
+**/.gitignore
+**/package.json
+**/package-lock.json
+**/README.md
+**/node_modules
+**/public
+**/src/themes
