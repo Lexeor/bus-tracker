@@ -4,8 +4,6 @@ import L from 'leaflet';
 import { type FC, useEffect, useRef } from 'react';
 import { useMap } from 'react-leaflet';
 
-const TEMP_OSRM_SRV_URL = 'https://bus-tracker.duckdns.org/osrm/route/v1';
-
 interface RoutingProps {
   stops: Stop[];
   color: string;
@@ -96,9 +94,7 @@ const Routing: FC<RoutingProps> = ({ stops, color, lineId, onRouteReady, hidden,
           show: false,
           // @ts-expect-error - leaflet-routing-machine types are incomplete
           createMarker: () => null,
-          router: L.routing.osrmv1({
-            serviceUrl: TEMP_OSRM_SRV_URL,
-          }),
+          router: L.routing.osrmv1(),
         }) as RoutingControl;
 
         routingControl.on('routesfound', (e: any) => {
