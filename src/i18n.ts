@@ -3,7 +3,7 @@ import { i18n } from '@lingui/core';
 export const locales = {
   ru: 'Русский',
   en: 'English',
-  me: 'Deutsch',
+  me: 'Montenegrin',
 };
 
 export async function activateLocale(locale: any) {

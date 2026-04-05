@@ -14,44 +14,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:35
-msgid "focusOnRoutes.on"
-msgstr "Focus on routes activated"
+#: src/components/StopMarker.tsx:79
+msgid "noTransportToday"
+msgstr "No transport on this line for today."
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:35
-msgid "focusOnRoutes.off"
-msgstr "Focus on routes deactivated"
-
-#. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:41
-msgid "busLines"
-msgstr "Transport lines"
-
-#. js-lingui-explicit-id
-#: src/components/StopMarker.tsx:82
+#: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Next buses"
 
 #. js-lingui-explicit-id
-#: src/components/StopMarker.tsx:84
+#: src/components/StopMarker.tsx:83
 msgid "noBuses"
 msgstr "No buses in the near future."
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "bus"
-msgstr "Bus"
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "ferry"
-msgstr "Ferry"
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "line"
-msgstr "Line"
 
 #. js-lingui-explicit-id
 #: src/components/Disclaimer.tsx:72
@@ -72,3 +47,36 @@ msgstr "For informational purposes only."
 #: src/components/Disclaimer.tsx:75
 msgid "refreshPage"
 msgstr "If something doesn't work - refresh the page"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "bus"
+msgstr "Bus"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "ferry"
+msgstr "Ferry"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "line"
+msgstr "Line"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.off"
+msgstr "Focus on routes deactivated"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.on"
+msgstr "Focus on routes activated"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:41
+msgid "busLines"
+msgstr "Transport lines"
+
+#~ msgid "noTransportToday"
+#~ msgstr "No transport on this line for today."

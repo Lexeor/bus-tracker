@@ -14,44 +14,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:35
-msgid "focusOnRoutes.on"
-msgstr "Fokus na rute je aktiviran"
+#: src/components/StopMarker.tsx:79
+msgid "noTransportToday"
+msgstr "Danas nema prevoza na ovoj liniji."
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:35
-msgid "focusOnRoutes.off"
-msgstr "Fokus na rute je deaktiviran"
-
-#. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:41
-msgid "busLines"
-msgstr "Transportne linije"
-
-#. js-lingui-explicit-id
-#: src/components/StopMarker.tsx:82
+#: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Autobusi u blizini vremena:"
 
 #. js-lingui-explicit-id
-#: src/components/StopMarker.tsx:84
+#: src/components/StopMarker.tsx:83
 msgid "noBuses"
 msgstr "Nema autobusa u bliskoj budućnosti."
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "bus"
-msgstr "Autobus"
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "ferry"
-msgstr "Trajekt"
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "line"
-msgstr "Linija"
 
 #. js-lingui-explicit-id
 #: src/components/Disclaimer.tsx:72
@@ -72,3 +47,36 @@ msgstr "Koristite informacije samo u informativne svrhe."
 #: src/components/Disclaimer.tsx:75
 msgid "refreshPage"
 msgstr "Ako nešto ne radi - osvježite stranicu"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "bus"
+msgstr "Autobus"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "ferry"
+msgstr "Trajekt"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "line"
+msgstr "Linija"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.off"
+msgstr "Fokus na rute je deaktiviran"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.on"
+msgstr "Fokus na rute je aktiviran"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:41
+msgid "busLines"
+msgstr "Transportne linije"
+
+#~ msgid "noTransportToday"
+#~ msgstr "Danas nema prevoza na ovoj liniji."

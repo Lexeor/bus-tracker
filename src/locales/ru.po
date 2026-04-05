@@ -14,44 +14,19 @@ msgstr ""
 "Plural-Forms: \n"
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:35
-msgid "focusOnRoutes.on"
-msgstr "Фокусировка на линиях включена"
+#: src/components/StopMarker.tsx:79
+msgid "noTransportToday"
+msgstr "Сегодня транспорта на этой линии больше не будет."
 
 #. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:35
-msgid "focusOnRoutes.off"
-msgstr "Фокусировка на линиях выключена"
-
-#. js-lingui-explicit-id
-#: src/components/RoutesPanel.tsx:41
-msgid "busLines"
-msgstr "Транспортные линии"
-
-#. js-lingui-explicit-id
-#: src/components/StopMarker.tsx:82
+#: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Следующие автобусы"
 
 #. js-lingui-explicit-id
-#: src/components/StopMarker.tsx:84
+#: src/components/StopMarker.tsx:83
 msgid "noBuses"
 msgstr "Нет автобусов в ближайшее время."
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "bus"
-msgstr "Автобус"
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "ferry"
-msgstr "Паром"
-
-#. js-lingui-explicit-id
-#: src/components/TransportMarker.tsx:249
-msgid "line"
-msgstr "Линия"
 
 #. js-lingui-explicit-id
 #: src/components/Disclaimer.tsx:72
@@ -72,3 +47,36 @@ msgstr "Информация предоставлена исключительн
 #: src/components/Disclaimer.tsx:75
 msgid "refreshPage"
 msgstr "Если что-то не работает - обновите страницу"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "bus"
+msgstr "Автобус"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "ferry"
+msgstr "Паром"
+
+#. js-lingui-explicit-id
+#: src/components/TransportMarker.tsx:256
+msgid "line"
+msgstr "Линия"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.off"
+msgstr "Фокусировка на линиях выключена"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:35
+msgid "focusOnRoutes.on"
+msgstr "Фокусировка на линиях включена"
+
+#. js-lingui-explicit-id
+#: src/components/RoutesPanel.tsx:41
+msgid "busLines"
+msgstr "Транспортные линии"
+
+#~ msgid "noTransportToday"
+#~ msgstr "Сегодня автобусов на этой линии больше не будет."
