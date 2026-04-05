@@ -15,6 +15,7 @@ export interface Line {
   color: string;
   type: string;
   stops: Stop[];
+  sundayStops?: Stop[];
 }
 
 export interface TransportPosition {
@@ -52,6 +53,13 @@ export interface RouteCoordinates {
 }
 
 // Utils
+export const getActiveStops = (line: Line): Stop[] => {
+  if (line.sundayStops && dayjs().day() === 0) {
+    return line.sundayStops;
+  }
+  return line.stops;
+};
+
 export const parseTimeToSeconds = (timeStr: string): number => {
   const parsed = dayjs(timeStr, 'HH:mm');
   return parsed.hour() * 3600 + parsed.minute() * 60;

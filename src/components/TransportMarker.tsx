@@ -1,4 +1,5 @@
 import {
+  getActiveStops,
   getCurrentTimeInSeconds,
   getRotationForAnchor,
   interpolateBetweenAnchors,
@@ -129,16 +130,22 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
     }
 
     const updatePositions = () => {
+      const activeStops = getActiveStops(line);
+      if (!activeStops.length) {
+        setTransportPositions([]);
+        return;
+      }
+
       const currentTime = getCurrentTimeInSeconds();
       const positions: TransportPosition[] = [];
       const { stopAnchors } = routeGeometry;
 
       // Calculate bus positions with rotation
-      const busCount = line.stops[0].time.length;
+      const busCount = activeStops[0].time.length;
 
       for (let busIndex = 0; busIndex < busCount; busIndex++) {
-        const firstStopTime = parseTimeToSeconds(line.stops[0].time[busIndex]);
-        const lastStopTime = parseTimeToSeconds(line.stops[line.stops.length - 1].time[busIndex]);
+        const firstStopTime = parseTimeToSeconds(activeStops[0].time[busIndex]);
+        const lastStopTime = parseTimeToSeconds(activeStops[activeStops.length - 1].time[busIndex]);
 
         if (currentTime < firstStopTime || currentTime > lastStopTime) {
           continue;
@@ -146,9 +153,9 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
 
         let found = false;
 
-        for (let stopIndex = 0; stopIndex < line.stops.length - 1; stopIndex++) {
-          const currentStop = line.stops[stopIndex];
-          const nextStop = line.stops[stopIndex + 1];
+        for (let stopIndex = 0; stopIndex < activeStops.length - 1; stopIndex++) {
+          const currentStop = activeStops[stopIndex];
+          const nextStop = activeStops[stopIndex + 1];
 
           const currentStopTime = parseTimeToSeconds(currentStop.time[busIndex]);
           const nextStopTime = parseTimeToSeconds(nextStop.time[busIndex]);
@@ -178,8 +185,8 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
                 progress,
                 type: line.type,
                 isOnRoute: true,
-                departureTime: line.stops[0].time[busIndex],
-                arrivalTime: line.stops[line.stops.length - 1].time[busIndex],
+                departureTime: activeStops[0].time[busIndex],
+                arrivalTime: activeStops[activeStops.length - 1].time[busIndex],
                 currentTime: currentTimeStr,
               });
             }
@@ -190,7 +197,7 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
         }
 
         if (!found && currentTime >= lastStopTime - 60 && currentTime <= lastStopTime) {
-          const lastStop = line.stops[line.stops.length - 1];
+          const lastStop = activeStops[activeStops.length - 1];
           const currentTimeStr = dayjs().format('HH:mm:ss');
           const lastAnchor = stopAnchors[stopAnchors.length - 1];
 
@@ -204,8 +211,8 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
               toStop: 'Конечная остановка',
               progress: 1,
               isOnRoute: true,
-              departureTime: line.stops[0].time[busIndex],
-              arrivalTime: line.stops[line.stops.length - 1].time[busIndex],
+              departureTime: activeStops[0].time[busIndex],
+              arrivalTime: activeStops[activeStops.length - 1].time[busIndex],
               currentTime: currentTimeStr,
             });
           }

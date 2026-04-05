@@ -1,11 +1,4 @@
-import {
-  calculateNextBuses,
-  formatTimeUntil,
-  getCurrentTimeInSeconds,
-  type Line,
-  type NextBusInfo,
-  type Stop,
-} from '@/utils';
+import { calculateNextBuses, formatTimeUntil, getCurrentTimeInSeconds, type Line, type NextBusInfo, type Stop } from '@/utils';
 import { useLingui } from '@lingui/react';
 import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
@@ -39,8 +32,9 @@ const StopMarker: FC<{
   stop: Stop;
   line: Line;
   isVisible: boolean;
+  otherEntries?: Array<{ stop: Stop; line: Line }>;
   onStopClick?: (stop: Stop, line: Line) => void;
-}> = ({ stop, line, isVisible, onStopClick }) => {
+}> = ({ stop, line, isVisible, otherEntries = [], onStopClick }) => {
   const { i18n } = useLingui();
 
   const [nextBuses, setNextBuses] = useState<NextBusInfo[]>([]);
@@ -50,16 +44,22 @@ const StopMarker: FC<{
 
     const updateInfo = () => {
       const currentSeconds = getCurrentTimeInSeconds();
-      const buses = calculateNextBuses(stop, line, currentSeconds);
-      setNextBuses(buses);
+
+      // Collect departures from the primary line and all other lines at this stop
+      const all: NextBusInfo[] = [...calculateNextBuses(stop, line, currentSeconds), ...otherEntries.flatMap(({ stop: s, line: l }) => calculateNextBuses(s, l, currentSeconds))];
+
+      setNextBuses(all.sort((a, b) => a.timeUntilArrival - b.timeUntilArrival));
     };
 
     updateInfo();
     const interval = setInterval(updateInfo, 1000);
     return () => clearInterval(interval);
-  }, [stop, line]);
+  }, [stop, line, otherEntries]);
 
   if (!isVisible) return null;
+
+  const hasMultipleLines = otherEntries.length > 0;
+  const maxShown = hasMultipleLines ? 5 : 3;
 
   return (
     <Marker
@@ -71,38 +71,27 @@ const StopMarker: FC<{
     >
       <Popup closeButton={false}>
         <div className="min-w-[200px] pt-6!">
-          <h3
-            className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-0.5 text-center"
-            style={{ backgroundColor: line.color }}
-          >
+          <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-1.5 text-center" style={{ backgroundColor: line.color }}>
             {stop.name}
           </h3>
 
           <div>
+            {nextBuses.some((busLine) => busLine.lineId !== line.id) && <p>{i18n._('noTransportToday')}</p>}
+
             <h3 className="text-sm font-semibold text-gray-700 mb-2">{i18n._('nextBuses')}</h3>
             {nextBuses.length === 0 ? (
               <p className="text-sm text-gray-500">{i18n._('noBuses')}</p>
             ) : (
               <div className="space-y-2">
-                {nextBuses.slice(0, 3).map((bus) => (
-                  <div
-                    key={`${bus.lineId}-${bus.busIndex}`}
-                    className="flex items-center justify-between p-2 rounded"
-                    style={{ backgroundColor: `${bus.color}15` }}
-                  >
+                {nextBuses.slice(0, maxShown).map((bus) => (
+                  <div key={`${bus.lineId}-${bus.busIndex}`} className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: `${bus.color}15` }}>
                     <div className="flex items-center gap-2">
-                      <div
-                        className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold"
-                        style={{ backgroundColor: bus.color }}
-                      >
+                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: bus.color }}>
                         {bus.lineId}
                       </div>
                       <span className="text-sm font-medium">{bus.scheduledTime}</span>
                     </div>
-                    <span
-                      className="text-sm font-semibold"
-                      style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}
-                    >
+                    <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
                       {bus.timeUntilArrival < 0 ? 'Сейчас' : formatTimeUntil(bus.timeUntilArrival)}
                     </span>
                   </div>
