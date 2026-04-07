@@ -1,7 +1,6 @@
 import Disclaimer from '@/components/Disclaimer';
 import LanguageSwitch from '@/components/LanguageSwitch';
 import LocationErrorMessage from '@/components/LocationErrorMessage';
-import DoubleTapZoom from '@/components/DoubleTapZoom';
 import MapCenterController from '@/components/MapCenterController';
 import RouteFocusController from '@/components/RouteFocusController';
 import RouteMarkers from '@/components/RouteMarkers';
@@ -20,6 +19,8 @@ import { type FC, useMemo, useState } from 'react';
 import { MapContainer, ScaleControl, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
+import 'leaflet-doubletapdrag';
+import 'leaflet-doubletapdragzoom';
 import RoutesPanel from './RoutesPanel';
 
 dayjs.extend(customParseFormat);
@@ -68,14 +69,13 @@ const Map: FC = () => {
 
   return (
     <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
-      <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false}>
+      <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false} doubleTapDragZoom="center" doubleTapDragZoomOptions={{ reverse: true }}>
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
         <ScaleControl position="bottomright" />
-        <DoubleTapZoom />
 
         {/* Center map on user location when requested */}
         <MapCenterController center={mapCenter} />
