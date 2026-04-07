@@ -1,3 +1,4 @@
+import { useThemeStore } from '@/store/themeStore';
 import { useLingui } from '@lingui/react';
 import { BusFrontIcon, CrosshairIcon, ShipIcon } from 'lucide-react';
 import { type Dispatch, type FC, type SetStateAction } from 'react';
@@ -13,16 +14,17 @@ interface RoutesPanelProps {
 
 const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, onRouteFocus, focusOnRoutes, onCenterToggle }) => {
   const { i18n } = useLingui();
+  const { isDark } = useThemeStore();
 
   // TODO: Add normal rendering instead of this workaround
   return (
     <div
-      className="absolute left-0 right-0 flex justify-center px-4 z-[1000] text-black"
+      className="absolute left-0 right-0 flex justify-center px-4 z-[1000]"
       style={{
         bottom: 'max(1rem, env(safe-area-inset-bottom) + 0.5rem)',
       }}
     >
-      <div className="relative bg-white/20 backdrop-blur-sm rounded-md border border-white/30 p-4 pt-2 w-full md:w-auto text-center">
+      <div className={`relative backdrop-blur-sm rounded-md border p-4 pt-2 w-full md:w-auto text-center transition-colors ${isDark ? 'bg-black/40 border-white/10 text-white' : 'bg-white/20 border-white/30 text-black'}`}>
         <button
           className="absolute top-2.5 right-2.5"
           onClick={() => {
@@ -30,7 +32,7 @@ const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, on
             onCenterToggle();
           }}
         >
-          <CrosshairIcon size={18} className={focusOnRoutes ? 'text-blue-500' : 'text-gray-600'} />
+          <CrosshairIcon size={18} className={focusOnRoutes ? 'text-blue-400' : isDark ? 'text-gray-400' : 'text-gray-600'} />
         </button>
         <h3>{i18n._('busLines')}</h3>
         <div className="flex gap-2 justify-center items-center">
@@ -40,7 +42,7 @@ const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, on
               onRouteFocus?.(0);
               setVisibleRoutes((prev: boolean[]) => [!prev[0], false, false, false]);
             }}
-            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[0] ? 'bg-red-500 text-white' : 'bg-gray-200 text-gray-600'}`}
+            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[0] ? 'bg-red-500 text-white' : isDark ? 'bg-white/10 text-gray-300' : 'bg-gray-200 text-gray-600'}`}
           >
             1
           </button>
@@ -49,7 +51,7 @@ const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, on
               onRouteFocus?.(1);
               setVisibleRoutes((prev: boolean[]) => [false, !prev[1], false, false]);
             }}
-            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-[#01579b] text-white' : 'bg-gray-200 text-gray-600'}`}
+            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[1] ? 'bg-[#01579b] text-white' : isDark ? 'bg-white/10 text-gray-300' : 'bg-gray-200 text-gray-600'}`}
           >
             2
           </button>
@@ -59,7 +61,7 @@ const RoutesPanel: FC<RoutesPanelProps> = ({ visibleRoutes, setVisibleRoutes, on
               onRouteFocus?.(2);
               setVisibleRoutes((prev: boolean[]) => [false, false, !prev[2], !prev[3]]);
             }}
-            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[2] ? 'bg-[#0d5e97] text-white' : 'bg-gray-200 text-gray-600'}`}
+            className={`px-8 py-2 rounded font-semibold transition-all cursor-pointer ${visibleRoutes[2] ? 'bg-[#0d5e97] text-white' : isDark ? 'bg-white/10 text-gray-300' : 'bg-gray-200 text-gray-600'}`}
           >
             3
           </button>

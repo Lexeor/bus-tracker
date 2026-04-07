@@ -1,3 +1,5 @@
+import ControlPanel from '@/components/ControlPanel';
+import DarkModeButton from '@/components/DarkModeButton';
 import Disclaimer from '@/components/Disclaimer';
 import LanguageSwitch from '@/components/LanguageSwitch';
 import LocationErrorMessage from '@/components/LocationErrorMessage';
@@ -6,16 +8,17 @@ import RouteFocusController from '@/components/RouteFocusController';
 import RouteMarkers from '@/components/RouteMarkers';
 import UserLocationButton from '@/components/UserLocationButton';
 import UserLocationMarker from '@/components/UserLocationMarker';
-import { defaultCenter, FOCUS_ON_ROUTES_KEY, VISIBLE_ROUTES_KEY } from '@/constants';
+import { darkTileLayer, defaultCenter, FOCUS_ON_ROUTES_KEY, lightTileLayer, VISIBLE_ROUTES_KEY } from '@/constants';
 import { lines } from '@/data';
 import { useLocalStorage, useLocalStorageBooleanArray } from '@/hooks/use-local-storage';
 import { useGeolocation } from '@/hooks/useGeolocation';
 import { useInitialRoutesFlash } from '@/hooks/useInitialRoutesFlash';
 import { useLanguageInit } from '@/hooks/useLanguageInit';
 import { routeCoordinatesStore } from '@/store/routeCoordinatesStore';
+import { useThemeStore } from '@/store/themeStore';
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-import { type FC, useMemo, useState } from 'react';
+import { type FC, useEffect, useMemo, useState } from 'react';
 import { MapContainer, ScaleControl, TileLayer } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-routing-machine/dist/leaflet-routing-machine.css';
@@ -39,6 +42,12 @@ const Map: FC = () => {
   // Focus mode state
   const [focusOnRoutes, setFocusOnRoutes] = useLocalStorage<boolean>(FOCUS_ON_ROUTES_KEY, true);
 
+  // Dark mode — managed by themeStore
+  const { isDark } = useThemeStore();
+  useEffect(() => {
+    document.body.classList.toggle('dark', isDark);
+  }, [isDark]);
+
   // Focused route state
   const [focusedRouteIndex, setFocusedRouteIndex] = useState<number | null>(null);
 
@@ -60,7 +69,7 @@ const Map: FC = () => {
   return (
     <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
       <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false} doubleTapDragZoom="center" doubleTapDragZoomOptions={{ reverse: true }}>
-        <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+        <TileLayer key={isDark ? 'dark' : 'light'} {...(isDark ? darkTileLayer : lightTileLayer)} />
 
         <ScaleControl position="bottomright" />
 
@@ -78,11 +87,12 @@ const Map: FC = () => {
       </MapContainer>
 
       {/* UI Controls */}
-      <UserLocationButton onClick={isLocationActive ? stopLocation : requestLocation} isLoading={isLoadingLocation} isActive={isLocationActive} />
-
-      <Disclaimer />
-
-      <LanguageSwitch />
+      <ControlPanel>
+        <UserLocationButton onClick={isLocationActive ? stopLocation : requestLocation} isLoading={isLoadingLocation} isActive={isLocationActive} />
+        <Disclaimer />
+        <DarkModeButton />
+        <LanguageSwitch />
+      </ControlPanel>
 
       {/* Location error message */}
       <LocationErrorMessage error={locationError} onDismiss={clearError} />

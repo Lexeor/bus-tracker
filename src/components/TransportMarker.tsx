@@ -1,3 +1,4 @@
+import { useThemeStore } from '@/store/themeStore';
 import {
   getActiveStops,
   getCurrentTimeInSeconds,
@@ -60,12 +61,15 @@ const ferryIcon = `<svg
     </svg>`;
 
 // Custom bus icon with rotation
-const createTransportIcon = (color: string, lineId: number, rotation: number = 0, type: string = 'bus') => {
+const createTransportIcon = (color: string, lineId: number, rotation: number = 0, type: string = 'bus', isDark: boolean = false) => {
+  const badgeBg = isDark ? 'rgba(71,85,105,0.9)' : 'white';
+  const badgeColor = isDark ? 'white' : color;
+  const circleBorder = isDark ? 'rgba(71,85,105,0.9)' : 'white';
   const iconHtml = `
     <div style="position: relative; width: 30px; height: 30px; z-index: 2000">
       <div style="
         position: absolute;
-        background-color: white;
+        background-color: ${badgeBg};
         font-size: 12px;
         width: 32px;
         height: 20px;
@@ -76,7 +80,7 @@ const createTransportIcon = (color: string, lineId: number, rotation: number = 0
         align-items: center;
         padding: 2px 6px;
         border-radius: 6px;
-        color: ${color};
+        color: ${badgeColor};
         font-weight: 600;
         z-index: 1;
         box-shadow: 0 1px 3px rgba(0,0,0,0.3);
@@ -88,7 +92,7 @@ const createTransportIcon = (color: string, lineId: number, rotation: number = 0
         height: 24px;
         background-color: ${color};
         border-radius: 0 99px 99px 99px;
-        border: 2px solid white;
+        border: 2px solid ${circleBorder};
         transform: rotate(${rotation + 45}deg);
         transition: transform 0.3s ease;
         z-index: 190;
@@ -117,6 +121,7 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
   const [transportPositions, setTransportPositions] = useState<TransportPosition[]>([]);
   const [routeReady, setRouteReady] = useState(false);
   const { i18n } = useLingui();
+  const { isDark } = useThemeStore();
 
   const handleRouteReady = (_geometry: RouteGeometryData) => {
     setRouteReady(true);
@@ -248,9 +253,9 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
           <Marker
             key={`bus-${line.id}-${transport.busIndex}`}
             position={transport.position}
-            icon={createTransportIcon(line.color, line.id, transport.rotation, line.type)}
+            icon={createTransportIcon(line.color, line.id, transport.rotation, line.type, isDark)}
           >
-            <Popup>
+            <Popup className={isDark ? 'dark-popup' : ''}>
               <div style={{ minWidth: '250px' }}>
                 <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
                   {line.type === 'bus' ? i18n._('bus') : i18n._('ferry')} #{transport.busIndex + 1} - {i18n._('line')}{' '}

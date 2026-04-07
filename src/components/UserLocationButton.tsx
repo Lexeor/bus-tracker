@@ -27,11 +27,7 @@ const UserLocationButton: FC<UserLocationButtonProps> = ({ onClick, isLoading, i
     <motion.button
       onClick={handleClick}
       disabled={isLoading}
-      className={`absolute z-[1000] backdrop-blur-sm p-3 rounded-lg shadow-lg transition-colors border border-white/40 ${isActive ? 'text-blue-500 hover:bg-blue-500/30' : 'text-gray-700 hover:bg-white/60 disabled:bg-white/20'}`}
-      style={{
-        top: 'max(1rem, env(safe-area-inset-top) + 0.5rem)',
-        right: '1rem',
-      }}
+      className={`p-3 transition-colors ${isActive ? 'text-blue-500 hover:bg-blue-500/20' : 'hover:bg-white/20 disabled:opacity-40'}`}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       aria-label={isActive ? 'Stop tracking location' : 'Show my location'}

@@ -1,3 +1,4 @@
+import { useThemeStore } from '@/store/themeStore';
 import { calculateNextBuses, formatTimeUntil, getCurrentTimeInSeconds, type Line, type NextBusInfo, type Stop } from '@/utils';
 import { useLingui } from '@lingui/react';
 import L from 'leaflet';
@@ -12,14 +13,15 @@ interface LineGroup {
 }
 
 // Custom stop icon
-const createStopIcon = (color: string, isSelected: boolean = false) => {
+const createStopIcon = (color: string, isDark: boolean = false, isSelected: boolean = false) => {
   const size = isSelected ? 14 : 10;
+  const border = isDark ? 'rgba(71,85,105,0.9)' : 'white';
   const iconHtml = `
     <div style="
       width: ${size}px;
       height: ${size}px;
       background-color: ${color};
-      border: 2px solid white;
+      border: 2px solid ${border};
       border-radius: 50%;
       box-shadow: 0 2px 4px rgba(0,0,0,0.3);
     "></div>
@@ -43,6 +45,7 @@ const StopMarker: FC<{
   onStopClick?: (stop: Stop, line: Line) => void;
 }> = ({ stop, line, isVisible, otherEntries = [], onStopClick }) => {
   const { i18n } = useLingui();
+  const { isDark } = useThemeStore();
 
   const [lineGroups, setLineGroups] = useState<LineGroup[]>([]);
 
@@ -73,29 +76,29 @@ const StopMarker: FC<{
   return (
     <Marker
       position={[stop.lat, stop.lng]}
-      icon={createStopIcon(line.color)}
+      icon={createStopIcon(line.color, isDark)}
       eventHandlers={{
         click: () => onStopClick?.(stop, line),
       }}
     >
-      <Popup closeButton={false}>
+      <Popup closeButton={false} className={isDark ? 'dark-popup' : ''}>
         <div className="min-w-[200px] pt-6!">
           <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-1.5 text-center" style={{ backgroundColor: line.color }}>
             {stop.name}
           </h3>
 
-          <h3 className="text-sm font-semibold text-gray-700 mb-2">{i18n._(line.type === 'ferry' ? 'nextFerries' : 'nextBuses')}</h3>
+          <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>{i18n._(line.type === 'ferry' ? 'nextFerries' : 'nextBuses')}</h3>
 
           {lineGroups.map((group, groupIdx) => (
             <div key={group.lineId}>
               {groupIdx > 0 && (
                 <div className="flex items-center gap-2 my-2">
-                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-gray-200'}`} />
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
-                    <span className="text-xs text-gray-500 font-medium">{group.lineName}</span>
+                    <span className={`text-xs font-medium ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>{group.lineName}</span>
                   </div>
-                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-gray-200'}`} />
                 </div>
               )}
               {group.buses.length === 0 ? (
@@ -103,12 +106,12 @@ const StopMarker: FC<{
               ) : (
                 <div className="space-y-1.5">
                   {group.buses.slice(0, 3).map((bus) => (
-                    <div key={`${bus.lineId}-${bus.busIndex}`} className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: `${bus.color}15` }}>
+                    <div key={`${bus.lineId}-${bus.busIndex}`} className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: isDark ? `${bus.color}25` : `${bus.color}15` }}>
                       <div className="flex items-center gap-2">
                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: bus.color }}>
                           {bus.lineId}
                         </div>
-                        <span className="text-sm font-medium">{bus.scheduledTime}</span>
+                        <span className={`text-sm font-medium ${isDark ? 'text-gray-200' : ''}`}>{bus.scheduledTime}</span>
                       </div>
                       <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
                         {bus.timeUntilArrival < 0 ? i18n._('now') : formatTimeUntil(bus.timeUntilArrival)}
