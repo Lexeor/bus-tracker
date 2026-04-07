@@ -4,6 +4,13 @@ import L from 'leaflet';
 import { type FC, useEffect, useState } from 'react';
 import { Marker, Popup } from 'react-leaflet';
 
+interface LineGroup {
+  lineId: number;
+  lineName: string;
+  color: string;
+  buses: NextBusInfo[];
+}
+
 // Custom stop icon
 const createStopIcon = (color: string, isSelected: boolean = false) => {
   const size = isSelected ? 14 : 10;
@@ -37,18 +44,23 @@ const StopMarker: FC<{
 }> = ({ stop, line, isVisible, otherEntries = [], onStopClick }) => {
   const { i18n } = useLingui();
 
-  const [nextBuses, setNextBuses] = useState<NextBusInfo[]>([]);
+  const [lineGroups, setLineGroups] = useState<LineGroup[]>([]);
 
   useEffect(() => {
     if (!stop || !line) return;
 
     const updateInfo = () => {
       const currentSeconds = getCurrentTimeInSeconds();
-
-      // Collect departures from the primary line and all other lines at this stop
-      const all: NextBusInfo[] = [...calculateNextBuses(stop, line, currentSeconds), ...otherEntries.flatMap(({ stop: s, line: l }) => calculateNextBuses(s, l, currentSeconds))];
-
-      setNextBuses(all.sort((a, b) => a.timeUntilArrival - b.timeUntilArrival));
+      const groups: LineGroup[] = [
+        { lineId: line.id, lineName: line.name, color: line.color, buses: calculateNextBuses(stop, line, currentSeconds) },
+        ...otherEntries.map(({ stop: s, line: l }) => ({
+          lineId: l.id,
+          lineName: l.name,
+          color: l.color,
+          buses: calculateNextBuses(s, l, currentSeconds),
+        })),
+      ];
+      setLineGroups(groups);
     };
 
     updateInfo();
@@ -57,9 +69,6 @@ const StopMarker: FC<{
   }, [stop, line, otherEntries]);
 
   if (!isVisible) return null;
-
-  const hasMultipleLines = otherEntries.length > 0;
-  const maxShown = hasMultipleLines ? 5 : 3;
 
   return (
     <Marker
@@ -75,30 +84,41 @@ const StopMarker: FC<{
             {stop.name}
           </h3>
 
-          <div>
-            {nextBuses.some((busLine) => busLine.lineId !== line.id) && <p>{i18n._('noTransportToday')}</p>}
+          <h3 className="text-sm font-semibold text-gray-700 mb-2">{i18n._(line.type === 'ferry' ? 'nextFerries' : 'nextBuses')}</h3>
 
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">{i18n._('nextBuses')}</h3>
-            {nextBuses.length === 0 ? (
-              <p className="text-sm text-gray-500">{i18n._('noBuses')}</p>
-            ) : (
-              <div className="space-y-2">
-                {nextBuses.slice(0, maxShown).map((bus) => (
-                  <div key={`${bus.lineId}-${bus.busIndex}`} className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: `${bus.color}15` }}>
-                    <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: bus.color }}>
-                        {bus.lineId}
-                      </div>
-                      <span className="text-sm font-medium">{bus.scheduledTime}</span>
-                    </div>
-                    <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
-                      {bus.timeUntilArrival < 0 ? 'Сейчас' : formatTimeUntil(bus.timeUntilArrival)}
-                    </span>
+          {lineGroups.map((group, groupIdx) => (
+            <div key={group.lineId}>
+              {groupIdx > 0 && (
+                <div className="flex items-center gap-2 my-2">
+                  <div className="flex-1 h-px bg-gray-200" />
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
+                    <span className="text-xs text-gray-500 font-medium">{group.lineName}</span>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
+                  <div className="flex-1 h-px bg-gray-200" />
+                </div>
+              )}
+              {group.buses.length === 0 ? (
+                <p className="text-xs text-gray-400 italic">{i18n._('noTransportToday')}</p>
+              ) : (
+                <div className="space-y-1.5">
+                  {group.buses.slice(0, 3).map((bus) => (
+                    <div key={`${bus.lineId}-${bus.busIndex}`} className="flex items-center justify-between p-2 rounded" style={{ backgroundColor: `${bus.color}15` }}>
+                      <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: bus.color }}>
+                          {bus.lineId}
+                        </div>
+                        <span className="text-sm font-medium">{bus.scheduledTime}</span>
+                      </div>
+                      <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
+                        {bus.timeUntilArrival < 0 ? i18n._('now') : formatTimeUntil(bus.timeUntilArrival)}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </div>
       </Popup>
     </Marker>
