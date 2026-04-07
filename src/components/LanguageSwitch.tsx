@@ -60,7 +60,7 @@ const LanguageSwitch: FC = () => {
   return (
     <div ref={ref} className="absolute top-32 right-4 z-[1000] flex flex-col items-center gap-2">
       {/* Main button — always a fixed square */}
-      <motion.button whileTap={{ scale: 0.88 }} className="w-12 h-12 bg-white rounded-lg shadow-lg flex items-center justify-center cursor-pointer p-3" onClick={() => setOpen((prev) => !prev)} aria-label="Language switch">
+      <motion.button whileTap={{ scale: 0.88 }} className="w-12 h-12 border border-white/40 bg-white/40 backdrop-blur-sm rounded-lg shadow-lg flex items-center justify-center cursor-pointer p-3" onClick={() => setOpen((prev) => !prev)} whileHover={{ scale: 1.05 }} aria-label="Language switch">
         <AnimatePresence mode="popLayout" initial={false}>
           <motion.div key={currentLanguage} initial={{ rotate: -30, opacity: 0, scale: 0.5 }} animate={{ rotate: 0, opacity: 1, scale: 1 }} exit={{ rotate: 30, opacity: 0, scale: 0.5 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }} className="w-6 h-6">
             {renderFlag(currentLanguage)}
@@ -71,9 +71,9 @@ const LanguageSwitch: FC = () => {
       {/* Dropdown panel — separate from the button */}
       <AnimatePresence>
         {open && (
-          <motion.div initial={{ opacity: 0, scale: 0.85, y: -8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85, y: -8 }} transition={{ type: 'spring', stiffness: 380, damping: 26 }} style={{ originX: 0.5, originY: 0 }} className="flex flex-col gap-2 bg-white rounded-lg shadow-lg p-2">
+          <motion.div initial={{ opacity: 0, scale: 0.85, y: -8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85, y: -8 }} transition={{ type: 'spring', stiffness: 380, damping: 26 }} style={{ originX: 0.5, originY: 0 }} className="flex flex-col gap-2 border border-white/40 bg-white/40 backdrop-blur-sm rounded-lg shadow-lg p-2">
             {otherLanguages.map((lang, i) => (
-              <motion.button key={lang} initial={{ opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.15 }} whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }} className="w-8 h-8 cursor-pointer overflow-hidden p-1 bg-white" onClick={() => handleLanguageClick(lang)} aria-label={FLAG_TITLES[lang]}>
+              <motion.button key={lang} initial={{ opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.15 }} whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }} className="w-8 h-8 cursor-pointer overflow-hidden p-1 bg-transparent" onClick={() => handleLanguageClick(lang)} aria-label={FLAG_TITLES[lang]}>
                 {renderFlag(lang)}
               </motion.button>
             ))}

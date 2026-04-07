@@ -1,9 +1,5 @@
 import Multilingual from '@/components/Multilingual';
-import {
-  DISCLAIMER_STORAGE_KEY,
-  FIRST_LANGUAGE_SELECTED_STORAGE_KEY,
-  SHOW_DISCLAIMER_STORAGE_KEY,
-} from '@/constants.ts';
+import { DISCLAIMER_STORAGE_KEY, FIRST_LANGUAGE_SELECTED_STORAGE_KEY, SHOW_DISCLAIMER_STORAGE_KEY } from '@/constants.ts';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { activateLocale } from '@/i18n.ts';
 import { useLingui } from '@lingui/react';
@@ -18,10 +14,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
   const { i18n } = useLingui();
 
   const [disclaimerSeen, setDisclaimerSeen] = useLocalStorage<boolean>(DISCLAIMER_STORAGE_KEY, false);
-  const [firstLanguageSelected, setFirstLanguageSelected] = useLocalStorage<boolean>(
-    FIRST_LANGUAGE_SELECTED_STORAGE_KEY,
-    false,
-  );
+  const [firstLanguageSelected, setFirstLanguageSelected] = useLocalStorage<boolean>(FIRST_LANGUAGE_SELECTED_STORAGE_KEY, false);
   const [show, setShow] = useLocalStorage<boolean>(SHOW_DISCLAIMER_STORAGE_KEY, false);
 
   useEffect(() => {
@@ -36,13 +29,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
 
   return (
     <>
-      <motion.button
-        className="absolute w-12 h-12 top-18 right-4 z-[1000] bg-white text-black hover:bg-gray-50 disabled:bg-gray-100 p-3 rounded-lg shadow-lg transition-all"
-        onClick={handleToggle}
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
-        aria-label="Информация"
-      >
+      <motion.button className="absolute w-12 h-12 top-18 right-4 z-[1000] border border-white/40 bg-white/40 backdrop-blur-sm text-black hover:bg-white/60 disabled:bg-white/20 p-3 rounded-lg shadow-lg transition-all" onClick={handleToggle} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} aria-label="Информация">
         <CircleQuestionMarkIcon />
       </motion.button>
 
@@ -94,13 +81,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
                 </div>
                 {/*<p>Ovaj projekat je lični razvoj i nalazi se u fazi Proof of Concept.</p>*/}
                 <div className="text-center w-full">
-                  <Multilingual
-                    values={[
-                      'Izaberite jezik interfejsa',
-                      'Please select interface language',
-                      'Выберите язык интерфейса',
-                    ]}
-                  />
+                  <Multilingual values={['Izaberite jezik interfejsa', 'Please select interface language', 'Выберите язык интерфейса']} />
                 </div>
                 <div className="flex flex-row gap-4 items-center justify-center my-2">
                   <button
@@ -132,13 +113,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
                   </button>
                 </div>
                 <div className="text-center text-sm w-full">
-                  <Multilingual
-                    values={[
-                      'Možete uvijek promijenit ovu postavku kasnije',
-                      'You can always change this setting later',
-                      'Вы сможете изменить это позже',
-                    ]}
-                  />
+                  <Multilingual values={['Možete uvijek promijenit ovu postavku kasnije', 'You can always change this setting later', 'Вы сможете изменить это позже']} />
                 </div>
               </div>
             )}
