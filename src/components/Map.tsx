@@ -1,6 +1,7 @@
 import Disclaimer from '@/components/Disclaimer';
 import LanguageSwitch from '@/components/LanguageSwitch';
 import LocationErrorMessage from '@/components/LocationErrorMessage';
+import DoubleTapZoom from '@/components/DoubleTapZoom';
 import MapCenterController from '@/components/MapCenterController';
 import RouteFocusController from '@/components/RouteFocusController';
 import RouteMarkers from '@/components/RouteMarkers';
@@ -74,6 +75,7 @@ const Map: FC = () => {
         />
 
         <ScaleControl position="bottomright" />
+        <DoubleTapZoom />
 
         {/* Center map on user location when requested */}
         <MapCenterController center={mapCenter} />
