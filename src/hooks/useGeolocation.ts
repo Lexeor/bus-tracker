@@ -8,7 +8,9 @@ export interface GeolocationState {
 }
 
 export interface UseGeolocationReturn extends GeolocationState {
+  isActive: boolean;
   requestLocation: () => void;
+  stopLocation: () => void;
   clearError: () => void;
 }
 
@@ -28,6 +30,7 @@ export const useGeolocation = (): UseGeolocationReturn => {
   const [location, setLocation] = useState<[number, number] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isActive, setIsActive] = useState<boolean>(false);
   const [shouldCenter, setShouldCenter] = useState<boolean>(false);
   const watchIdRef = useRef<number | null>(null);
 
@@ -74,6 +77,16 @@ export const useGeolocation = (): UseGeolocationReturn => {
     );
   }, [handlePositionUpdate]);
 
+  const stopLocation = useCallback((): void => {
+    if (watchIdRef.current !== null) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+      watchIdRef.current = null;
+    }
+    setLocation(null);
+    setIsActive(false);
+    setShouldCenter(false);
+  }, []);
+
   const requestLocation = useCallback((): void => {
     if (!navigator.geolocation) {
       setError('Geolocation is not supported by your browser');
@@ -88,6 +101,7 @@ export const useGeolocation = (): UseGeolocationReturn => {
         handlePositionUpdate(position);
         setShouldCenter(true);
         setIsLoading(false);
+        setIsActive(true);
         startWatchingPosition();
       },
       handlePositionError,
@@ -117,8 +131,10 @@ export const useGeolocation = (): UseGeolocationReturn => {
     location,
     error,
     isLoading,
+    isActive,
     shouldCenter,
     requestLocation,
+    stopLocation,
     clearError,
   };
 };

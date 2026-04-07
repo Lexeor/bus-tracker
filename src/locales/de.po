@@ -22,6 +22,14 @@ msgid "languageSwitched"
 msgstr "Sprache auf Deutsch umgestellt"
 
 #. js-lingui-explicit-id
+msgid "locationEnabled"
+msgstr "Standortverfolgung aktiviert"
+
+#. js-lingui-explicit-id
+msgid "locationDisabled"
+msgstr "Standortverfolgung deaktiviert"
+
+#. js-lingui-explicit-id
 msgid "noTransportToday"
 msgstr "Heute kein Verkehr auf dieser Linie mehr."
 

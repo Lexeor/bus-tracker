@@ -17,6 +17,13 @@ button {
   cursor: pointer;
 }
 
+@media (max-width: 600px) {
+  [data-sonner-toaster] {
+    width: calc(100% - var(--mobile-offset-right, 0px)) !important;
+  }
+}
+
+
 .leaflet-container {
   width: 100vw;
   height: 100vh;

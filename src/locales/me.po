@@ -27,6 +27,14 @@ msgid "languageSwitched"
 msgstr "Jezik promijenjen na Crnogorski"
 
 #. js-lingui-explicit-id
+msgid "locationEnabled"
+msgstr "Praćenje lokacije uključeno"
+
+#. js-lingui-explicit-id
+msgid "locationDisabled"
+msgstr "Praćenje lokacije isključeno"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Autobusi u blizini vremena:"

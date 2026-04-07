@@ -46,7 +46,7 @@ const Map: FC = () => {
   useInitialRoutesFlash(setVisibleRoutes, lines.length);
 
   // Geolocation management
-  const { location: userLocation, error: locationError, isLoading: isLoadingLocation, shouldCenter: shouldCenterOnUser, requestLocation, clearError } = useGeolocation();
+  const { location: userLocation, error: locationError, isLoading: isLoadingLocation, isActive: isLocationActive, shouldCenter: shouldCenterOnUser, requestLocation, stopLocation, clearError } = useGeolocation();
 
   // Memoize center value to avoid unnecessary re-renders
   const mapCenter = useMemo(() => (shouldCenterOnUser ? userLocation : null), [shouldCenterOnUser, userLocation]);
@@ -78,7 +78,7 @@ const Map: FC = () => {
       </MapContainer>
 
       {/* UI Controls */}
-      <UserLocationButton onClick={requestLocation} isLoading={isLoadingLocation} />
+      <UserLocationButton onClick={isLocationActive ? stopLocation : requestLocation} isLoading={isLoadingLocation} isActive={isLocationActive} />
 
       <Disclaimer />
 

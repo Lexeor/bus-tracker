@@ -1,34 +1,59 @@
-import { motion } from 'motion/react';
+import { useLingui } from '@lingui/react';
+import { Locate, LocateFixed } from 'lucide-react';
+import { AnimatePresence, motion } from 'motion/react';
 import { type FC } from 'react';
+import { toast } from 'sonner';
 
 interface UserLocationButtonProps {
   onClick: () => void;
   isLoading: boolean;
+  isActive: boolean;
 }
 
-const UserLocationButton: FC<UserLocationButtonProps> = ({ onClick, isLoading }) => {
+const UserLocationButton: FC<UserLocationButtonProps> = ({ onClick, isLoading, isActive }) => {
+  const { i18n } = useLingui();
+
+  const handleClick = () => {
+    onClick();
+    if (!isLoading) {
+      const enabling = !isActive;
+      toast(i18n._(enabling ? 'locationEnabled' : 'locationDisabled'), {
+        icon: enabling ? <LocateFixed size={18} /> : <Locate size={18} />,
+      });
+    }
+  };
+
   return (
     <motion.button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={isLoading}
-      className="absolute z-[1000] border border-white/40 bg-white/40 backdrop-blur-sm hover:bg-white/60 disabled:bg-white/20 p-3 rounded-lg shadow-lg transition-all"
+      className={`absolute z-[1000] backdrop-blur-sm p-3 rounded-lg shadow-lg transition-colors border border-white/40 ${isActive ? 'text-blue-500 hover:bg-blue-500/30' : 'text-gray-700 hover:bg-white/60 disabled:bg-white/20'}`}
       style={{
         top: 'max(1rem, env(safe-area-inset-top) + 0.5rem)',
         right: '1rem',
       }}
-      title="Show my location"
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
-      aria-label="Show my location"
+      aria-label={isActive ? 'Stop tracking location' : 'Show my location'}
     >
-      {isLoading ? (
-        <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" role="status" aria-label="Loading location" />
-      ) : (
-        <svg className="w-6 h-6 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-      )}
+      <AnimatePresence mode="popLayout" initial={false}>
+        <motion.div
+          key={isLoading ? 'loading' : isActive ? 'active' : 'inactive'}
+          initial={{ rotate: -30, opacity: 0, scale: 0.5 }}
+          animate={{ rotate: 0, opacity: 1, scale: 1 }}
+          exit={{ rotate: 30, opacity: 0, scale: 0.5 }}
+          transition={{ type: 'spring', stiffness: 400, damping: 22 }}
+          className="w-6 h-6 flex items-center justify-center"
+        >
+          {isLoading ? (
+            <div className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" role="status" aria-label="Loading location" />
+          ) : isActive ? (
+            <LocateFixed size={24} />
+          ) : (
+            <Locate size={24} />
+          )}
+        </motion.div>
+      </AnimatePresence>
     </motion.button>
   );
 };

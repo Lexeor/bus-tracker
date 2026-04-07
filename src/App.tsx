@@ -14,9 +14,10 @@ function App() {
         <Toaster
           visibleToasts={2}
           position="top-center"
+          mobileOffset={{ left: '1rem', right: '4rem', top: '1rem' }}
           toastOptions={{
             classNames: {
-              toast: '!bg-white/40 !backdrop-blur-sm !rounded-sm',
+              toast: '!bg-white/40 !backdrop-blur-sm !rounded-sm p-3!',
             },
           }}
         />

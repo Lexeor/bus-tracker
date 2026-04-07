@@ -27,6 +27,14 @@ msgid "languageSwitched"
 msgstr "Language switched to English"
 
 #. js-lingui-explicit-id
+msgid "locationEnabled"
+msgstr "Location tracking enabled"
+
+#. js-lingui-explicit-id
+msgid "locationDisabled"
+msgstr "Location tracking disabled"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Next buses"

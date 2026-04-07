@@ -27,6 +27,14 @@ msgid "languageSwitched"
 msgstr "Язык изменён на Русский"
 
 #. js-lingui-explicit-id
+msgid "locationEnabled"
+msgstr "Геолокация включена"
+
+#. js-lingui-explicit-id
+msgid "locationDisabled"
+msgstr "Геолокация отключена"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Следующие автобусы"
