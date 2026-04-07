@@ -12,3 +12,16 @@ export const LANGUAGE_KEY = 'busapp-lang';
 export const FIRST_LANGUAGE_SELECTED_STORAGE_KEY = 'busapp-first-language-selected';
 
 export const FOCUS_ON_ROUTES_KEY = 'busapp-focus-on-routes';
+
+export const DARK_MODE_KEY = 'busapp-dark-mode';
+
+export const lightTileLayer = {
+  url: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+  attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+};
+
+export const darkTileLayer = {
+  url: 'https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png',
+  attribution:
+    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+};
