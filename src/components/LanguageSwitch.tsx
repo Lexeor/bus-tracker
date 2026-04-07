@@ -1,54 +1,86 @@
 import { LANGUAGE_KEY } from '@/constants.ts';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { activateLocale } from '@/i18n';
-import { GB, ME, RU } from 'country-flag-icons/react/1x1';
-import { motion } from 'motion/react';
-import { type FC, Fragment, type ReactNode, useState } from 'react';
+import { useLingui } from '@lingui/react';
+import { DE, GB, ME, RU } from 'country-flag-icons/react/1x1';
+import { AnimatePresence, motion } from 'motion/react';
+import { type FC, useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
 
-interface LanguageSwitchProps {}
+const FLAG_COMPONENTS: Record<string, FC<{ title: string; className: string }>> = {
+  me: ME,
+  en: GB,
+  ru: RU,
+  de: DE,
+};
 
-const LanguageSwitch: FC<LanguageSwitchProps> = () => {
+const FLAG_TITLES: Record<string, string> = {
+  me: 'Crnogorski',
+  en: 'English',
+  ru: 'Русский',
+  de: 'Deutsch',
+};
+
+const LANGUAGE_ORDER = ['me', 'en', 'ru', 'de'];
+
+const LanguageSwitch: FC = () => {
+  const { i18n } = useLingui();
   const [currentLanguage, setCurrentLanguage] = useLocalStorage<string>(LANGUAGE_KEY, 'en');
   const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   const handleLanguageClick = (lang: string) => {
     setCurrentLanguage(lang);
     setOpen(false);
-    activateLocale(lang);
+    activateLocale(lang).then(() => {
+      const Flag = FLAG_COMPONENTS[lang];
+      toast(i18n._('languageSwitched'), {
+        icon: <Flag title={FLAG_TITLES[lang]} className="w-5 h-5 rounded-sm border border-neutral-200 flex-shrink-0" />,
+      });
+    });
   };
 
-  const languages: Record<string, ReactNode> = {
-    me: <ME title="Crnogorski" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('me')} />,
-    en: <GB title="English" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('en')} />,
-    ru: <RU title="Русский" className="border-2 border-neutral-200" onClick={() => handleLanguageClick('ru')} />,
+  const otherLanguages = LANGUAGE_ORDER.filter((l) => l !== currentLanguage);
+
+  const renderFlag = (lang: string) => {
+    const Flag = FLAG_COMPONENTS[lang];
+    return <Flag title={FLAG_TITLES[lang]} className="w-full h-full rounded-sm border-2 border-neutral-200" />;
   };
 
   return (
-    <motion.button
-      className="absolute w-12 min-h-12 top-32 right-4 z-[1000] flex flex-col gap-3 bg-white text-black hover:bg-gray-50 disabled:bg-gray-100 p-3 rounded-lg shadow-lg transition-all duration-300"
-      onClick={() => {
-        if (!open) {
-          setOpen((prev) => !prev);
-        }
-      }}
-      aria-label="Language switch"
-    >
-      {open ? (
-        <>
-          <div className="relative">
-            <div className="relative z-2 h-6 w-6">{languages[currentLanguage]}</div>
-            <div className="absolute -top-1 -bottom-1 -left-3 -right-3 w-12 h-8 bg-green-500/20 z-1">
-              <div className="absolute top-0 left-0 w-1 h-full bg-green-500 z-2"></div>
-            </div>
-          </div>
-          {Array.from(Object.keys(languages)).map((lang) =>
-            lang !== currentLanguage ? <Fragment key={lang}>{languages[lang]}</Fragment> : null,
-          )}
-        </>
-      ) : (
-        <>{languages[currentLanguage]}</>
-      )}
-    </motion.button>
+    <div ref={ref} className="absolute top-32 right-4 z-[1000] flex flex-col items-center gap-2">
+      {/* Main button — always a fixed square */}
+      <motion.button whileTap={{ scale: 0.88 }} className="w-12 h-12 bg-white rounded-lg shadow-lg flex items-center justify-center cursor-pointer p-3" onClick={() => setOpen((prev) => !prev)} aria-label="Language switch">
+        <AnimatePresence mode="popLayout" initial={false}>
+          <motion.div key={currentLanguage} initial={{ rotate: -30, opacity: 0, scale: 0.5 }} animate={{ rotate: 0, opacity: 1, scale: 1 }} exit={{ rotate: 30, opacity: 0, scale: 0.5 }} transition={{ type: 'spring', stiffness: 400, damping: 22 }} className="w-6 h-6">
+            {renderFlag(currentLanguage)}
+          </motion.div>
+        </AnimatePresence>
+      </motion.button>
+
+      {/* Dropdown panel — separate from the button */}
+      <AnimatePresence>
+        {open && (
+          <motion.div initial={{ opacity: 0, scale: 0.85, y: -8 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.85, y: -8 }} transition={{ type: 'spring', stiffness: 380, damping: 26 }} style={{ originX: 0.5, originY: 0 }} className="flex flex-col gap-2 bg-white rounded-lg shadow-lg p-2">
+            {otherLanguages.map((lang, i) => (
+              <motion.button key={lang} initial={{ opacity: 0, x: 6 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: i * 0.05, duration: 0.15 }} whileHover={{ scale: 1.12 }} whileTap={{ scale: 0.9 }} className="w-8 h-8 cursor-pointer overflow-hidden p-1 bg-white" onClick={() => handleLanguageClick(lang)} aria-label={FLAG_TITLES[lang]}>
+                {renderFlag(lang)}
+              </motion.button>
+            ))}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
   );
 };
 

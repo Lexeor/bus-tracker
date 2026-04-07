@@ -19,9 +19,21 @@ msgid "noTransportToday"
 msgstr "Danas nema prevoza na ovoj liniji."
 
 #. js-lingui-explicit-id
+msgid "now"
+msgstr "Sada"
+
+#. js-lingui-explicit-id
+msgid "languageSwitched"
+msgstr "Jezik promijenjen na Crnogorski"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Autobusi u blizini vremena:"
+
+#. js-lingui-explicit-id
+msgid "nextFerries"
+msgstr "Sljedeći trajekti"
 
 #. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:83

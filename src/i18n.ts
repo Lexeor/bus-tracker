@@ -4,6 +4,7 @@ export const locales = {
   ru: 'Русский',
   en: 'English',
   me: 'Montenegrin',
+  de: 'Deutsch',
 };
 
 export async function activateLocale(locale: any) {

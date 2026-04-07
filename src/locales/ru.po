@@ -19,9 +19,21 @@ msgid "noTransportToday"
 msgstr "Сегодня транспорта на этой линии больше не будет."
 
 #. js-lingui-explicit-id
+msgid "now"
+msgstr "Сейчас"
+
+#. js-lingui-explicit-id
+msgid "languageSwitched"
+msgstr "Язык изменён на Русский"
+
+#. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:81
 msgid "nextBuses"
 msgstr "Следующие автобусы"
+
+#. js-lingui-explicit-id
+msgid "nextFerries"
+msgstr "Следующие паромы"
 
 #. js-lingui-explicit-id
 #: src/components/StopMarker.tsx:83
