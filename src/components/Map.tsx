@@ -34,10 +34,7 @@ const Map: FC = () => {
   useLanguageInit();
 
   // Routes visibility state
-  const [visibleRoutes, setVisibleRoutes] = useLocalStorageBooleanArray(
-    VISIBLE_ROUTES_KEY,
-    Array(lines.length).fill(false),
-  );
+  const [visibleRoutes, setVisibleRoutes] = useLocalStorageBooleanArray(VISIBLE_ROUTES_KEY, Array(lines.length).fill(false));
 
   // Focus mode state
   const [focusOnRoutes, setFocusOnRoutes] = useLocalStorage<boolean>(FOCUS_ON_ROUTES_KEY, true);
@@ -49,14 +46,7 @@ const Map: FC = () => {
   useInitialRoutesFlash(setVisibleRoutes, lines.length);
 
   // Geolocation management
-  const {
-    location: userLocation,
-    error: locationError,
-    isLoading: isLoadingLocation,
-    shouldCenter: shouldCenterOnUser,
-    requestLocation,
-    clearError,
-  } = useGeolocation();
+  const { location: userLocation, error: locationError, isLoading: isLoadingLocation, shouldCenter: shouldCenterOnUser, requestLocation, clearError } = useGeolocation();
 
   // Memoize center value to avoid unnecessary re-renders
   const mapCenter = useMemo(() => (shouldCenterOnUser ? userLocation : null), [shouldCenterOnUser, userLocation]);
@@ -70,10 +60,7 @@ const Map: FC = () => {
   return (
     <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
       <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false} doubleTapDragZoom="center" doubleTapDragZoomOptions={{ reverse: true }}>
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-        />
+        <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         <ScaleControl position="bottomright" />
 
@@ -100,13 +87,7 @@ const Map: FC = () => {
       {/* Location error message */}
       <LocationErrorMessage error={locationError} onDismiss={clearError} />
 
-      <RoutesPanel
-        visibleRoutes={visibleRoutes}
-        setVisibleRoutes={setVisibleRoutes}
-        onRouteFocus={setFocusedRouteIndex}
-        focusOnRoutes={focusOnRoutes}
-        onCenterToggle={() => setFocusOnRoutes((prev) => !prev)}
-      />
+      <RoutesPanel visibleRoutes={visibleRoutes} setVisibleRoutes={setVisibleRoutes} onRouteFocus={setFocusedRouteIndex} focusOnRoutes={focusOnRoutes} onCenterToggle={() => setFocusOnRoutes((prev) => !prev)} />
     </div>
   );
 };
