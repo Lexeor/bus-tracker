@@ -83,7 +83,7 @@ body.dark .leaflet-control-scale-line {
 /* Dark mode popup overrides */
 .dark-popup .leaflet-popup-content-wrapper {
   background: #0f172a;
-  color: white;
+  color: #e2e2e2;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
@@ -97,5 +97,5 @@ body.dark .leaflet-control-scale-line {
 }
 
 .dark-popup .leaflet-popup-close-button:hover {
-  color: white;
+  color: #e2e2e2;
 }

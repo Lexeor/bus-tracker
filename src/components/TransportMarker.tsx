@@ -1,15 +1,5 @@
 import { useThemeStore } from '@/store/themeStore';
-import {
-  getActiveStops,
-  getCurrentTimeInSeconds,
-  getRotationForAnchor,
-  interpolateBetweenAnchors,
-  type Line,
-  parseTimeToSeconds,
-  type RouteCoordinates,
-  type RouteGeometryData,
-  type TransportPosition,
-} from '@/utils';
+import { getActiveStops, getCurrentTimeInSeconds, getRotationForAnchor, interpolateBetweenAnchors, type Line, parseTimeToSeconds, type RouteCoordinates, type RouteGeometryData, type TransportPosition } from '@/utils';
 import { useLingui } from '@lingui/react';
 import dayjs from 'dayjs';
 import L from 'leaflet';
@@ -235,14 +225,7 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
 
   return (
     <>
-      <Routing
-        stops={line.stops}
-        color={line.color}
-        lineId={line.id}
-        onRouteReady={handleRouteReady}
-        routeCoordinatesStore={routeCoordinatesStore}
-        hidden={hidden}
-      />
+      <Routing stops={line.stops} color={line.color} lineId={line.id} onRouteReady={handleRouteReady} routeCoordinatesStore={routeCoordinatesStore} hidden={hidden} />
       {transportPositions.map((transport) => {
         // Hide ferry markers when line is hidden
         if (hidden && line.type === 'ferry') {
@@ -250,16 +233,11 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
         }
 
         return (
-          <Marker
-            key={`bus-${line.id}-${transport.busIndex}`}
-            position={transport.position}
-            icon={createTransportIcon(line.color, line.id, transport.rotation, line.type, isDark)}
-          >
+          <Marker key={`bus-${line.id}-${transport.busIndex}`} position={transport.position} icon={createTransportIcon(line.color, line.id, transport.rotation, line.type, isDark)}>
             <Popup className={isDark ? 'dark-popup' : ''}>
               <div style={{ minWidth: '250px' }}>
                 <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
-                  {line.type === 'bus' ? i18n._('bus') : i18n._('ferry')} #{transport.busIndex + 1} - {i18n._('line')}{' '}
-                  {line.id}
+                  {line.type === 'bus' ? i18n._('bus') : i18n._('ferry')} #{transport.busIndex + 1} - {i18n._('line')} {line.id}
                 </h3>
               </div>
             </Popup>
