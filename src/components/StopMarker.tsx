@@ -87,18 +87,18 @@ const StopMarker: FC<{
             {stop.name}
           </h3>
 
-          <h3 className={`text-sm font-semibold mb-2 ${isDark ? 'text-[#e2e2e2]' : 'text-gray-700'}`}>{i18n._(line.type === 'ferry' ? 'nextFerries' : 'nextBuses')}</h3>
+          <h3 className="text-sm font-semibold mb-2 text-gray-700 dark:text-[#e2e2e2]">{i18n._(line.type === 'ferry' ? 'nextFerries' : 'nextBuses')}</h3>
 
           {lineGroups.map((group, groupIdx) => (
             <div key={group.lineId}>
               {groupIdx > 0 && (
                 <div className="flex items-center gap-2 my-2">
-                  <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-gray-200'}`} />
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: group.color }} />
-                    <span className={`text-xs font-medium ${isDark ? 'text-[#e2e2e2]' : 'text-gray-500'}`}>{group.lineName}</span>
+                    <span className="text-xs font-medium text-gray-500 dark:text-[#e2e2e2]">{group.lineName}</span>
                   </div>
-                  <div className={`flex-1 h-px ${isDark ? 'bg-white/10' : 'bg-gray-200'}`} />
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-white/10" />
                 </div>
               )}
               {group.buses.length === 0 ? (
@@ -111,7 +111,7 @@ const StopMarker: FC<{
                         <div className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold" style={{ backgroundColor: bus.color }}>
                           {bus.lineId}
                         </div>
-                        <span className={`text-sm font-medium ${isDark ? 'text-[#e2e2e2]' : ''}`}>{bus.scheduledTime}</span>
+                        <span className="text-sm font-medium dark:text-[#e2e2e2]">{bus.scheduledTime}</span>
                       </div>
                       <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
                         {bus.timeUntilArrival < 0 ? i18n._('now') : formatTimeUntil(bus.timeUntilArrival)}

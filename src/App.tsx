@@ -21,9 +21,7 @@ function App() {
           mobileOffset={{ left: '1rem', right: '4rem', top: '1rem' }}
           toastOptions={{
             classNames: {
-              toast: isDark
-                ? '!bg-black/50 !backdrop-blur-sm !rounded-sm p-3!'
-                : '!bg-white/40 !backdrop-blur-sm !rounded-sm p-3!',
+              toast: '!bg-white/40 !backdrop-blur-sm !rounded-sm p-3! dark:!bg-black/50',
             },
           }}
         />

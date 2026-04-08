@@ -3,7 +3,6 @@ import { LANGUAGES } from '@/config/languages';
 import { DISCLAIMER_STORAGE_KEY, FIRST_LANGUAGE_SELECTED_STORAGE_KEY, SHOW_DISCLAIMER_STORAGE_KEY } from '@/constants.ts';
 import { useLocalStorage } from '@/hooks/use-local-storage';
 import { activateLocale } from '@/i18n.ts';
-import { useThemeStore } from '@/store/themeStore';
 import { useLingui } from '@lingui/react';
 import { CircleQuestionMarkIcon } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
@@ -14,7 +13,6 @@ interface DisclaimerProps {}
 
 const Disclaimer: FC<DisclaimerProps> = () => {
   const { i18n } = useLingui();
-  const { isDark } = useThemeStore();
 
   const [disclaimerSeen, setDisclaimerSeen] = useLocalStorage<boolean>(DISCLAIMER_STORAGE_KEY, false);
   const [firstLanguageSelected, setFirstLanguageSelected] = useLocalStorage<boolean>(FIRST_LANGUAGE_SELECTED_STORAGE_KEY, false);
@@ -35,11 +33,11 @@ const Disclaimer: FC<DisclaimerProps> = () => {
       {show && (
         <motion.div className="fixed inset-0 z-[2000] flex items-center justify-center p-4" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }}>
           {firstLanguageSelected ? (
-            <motion.div className={`w-full max-w-lg p-6 rounded-lg shadow-lg backdrop-blur-sm flex flex-col gap-2 ${isDark ? 'bg-black/60 text-[#e2e2e2]' : 'bg-white/80 text-neutral-600'}`} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.2 }}>
+            <motion.div className="w-full max-w-lg p-6 rounded-lg shadow-lg backdrop-blur-sm flex flex-col gap-2 bg-white/80 text-neutral-600 dark:bg-black/60 dark:text-[#e2e2e2]" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.2 }}>
               <p>
                 <strong>{i18n._('warning')}:</strong> {i18n._('locationWarning')}
               </p>
-              <p className={isDark ? 'text-[#e2e2e2]' : 'text-gray-600'}>{i18n._('information')}</p>
+              <p className="text-gray-600 dark:text-[#e2e2e2]">{i18n._('information')}</p>
               <p className="text-red-500 font-bold">{i18n._('refreshPage')} 🔄</p>
               <button
                 type="button"
@@ -53,7 +51,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
               </button>
             </motion.div>
           ) : (
-            <motion.div className={`w-full max-w-sm p-6 rounded-lg min-h-72 shadow-lg backdrop-blur-sm flex flex-col gap-2 items-center justify-center ${isDark ? 'bg-black/60 text-[#e2e2e2]' : 'bg-white/80 text-neutral-600'}`} initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.2 }}>
+            <motion.div className="w-full max-w-sm p-6 rounded-lg min-h-72 shadow-lg backdrop-blur-sm flex flex-col gap-2 items-center justify-center bg-white/80 text-neutral-600 dark:bg-black/60 dark:text-[#e2e2e2]" initial={{ scale: 0.9, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} exit={{ scale: 0.9, opacity: 0 }} transition={{ duration: 0.2 }}>
               <h2 className="text-xl font-semibold text-center w-full mb-2">
                 <Multilingual values={['Dobro došli!', 'Welcome!', 'Добро пожаловать!']} />
               </h2>
@@ -70,7 +68,7 @@ const Disclaimer: FC<DisclaimerProps> = () => {
                       void activateLocale(code);
                     }}
                   >
-                    <FlagWide title={title} className={`w-14 border-3 ${isDark ? 'border-white/10 hover:border-white/20' : 'border-neutral-100 hover:border-neutral-200'} active:border-green-700/40 transition-colors duration-300`} />
+                    <FlagWide title={title} className="w-14 border-3 border-neutral-100 hover:border-neutral-200 dark:border-white/10 dark:hover:border-white/20 active:border-green-700/40 transition-colors duration-300" />
                   </button>
                 ))}
               </div>
