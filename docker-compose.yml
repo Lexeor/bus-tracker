@@ -2,5 +2,9 @@ services:
   bus-tracker:
     build: .
     restart: unless-stopped
-    ports:
-      - "8080:80"
+    networks:
+      - shared
+
+networks:
+  shared:
+    external: true
