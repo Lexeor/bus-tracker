@@ -24,3 +24,6 @@ src/locales
 *.njsproj
 *.sln
 *.sw?
+
+# Claude
+CLAUDE.md

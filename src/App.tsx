@@ -15,6 +15,7 @@ function App() {
       <div style={{ height: '100vh', width: '100vw', overflow: 'hidden', backgroundColor: '#002200', padding: 0 }}>
         <Map />
         <Toaster
+          key={isDark ? 'dark' : 'light'}
           visibleToasts={2}
           position="top-center"
           theme={isDark ? 'dark' : 'light'}

@@ -46,6 +46,10 @@ const Map: FC = () => {
   const { isDark } = useThemeStore();
   useEffect(() => {
     document.body.classList.toggle('dark', isDark);
+    const metaThemeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (metaThemeColor) {
+      metaThemeColor.content = isDark ? '#262626' : '#f2efe9';
+    }
   }, [isDark]);
 
   // Focused route state
