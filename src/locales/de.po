@@ -18,6 +18,18 @@ msgid "now"
 msgstr "Jetzt"
 
 #. js-lingui-explicit-id
+msgid "time.sec"
+msgstr "Sek."
+
+#. js-lingui-explicit-id
+msgid "time.min"
+msgstr "Min."
+
+#. js-lingui-explicit-id
+msgid "time.h"
+msgstr "Std."
+
+#. js-lingui-explicit-id
 msgid "languageSwitched"
 msgstr "Sprache auf Deutsch umgestellt"
 

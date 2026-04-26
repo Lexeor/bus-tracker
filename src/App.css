@@ -81,22 +81,22 @@ body.dark .leaflet-control-scale-line {
   border-top-color: rgba(255, 255, 255, 0.25) !important;
 }
 
-/* Dark mode popup overrides */
-.dark-popup .leaflet-popup-content-wrapper {
+/* Dark mode popup overrides — driven by body.dark so open popups update instantly on theme switch */
+body.dark .leaflet-popup-content-wrapper {
   background: #0f172a;
   color: #e2e2e2;
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
 }
 
-.dark-popup .leaflet-popup-tip {
+body.dark .leaflet-popup-tip {
   background: #0f172a;
 }
 
-.dark-popup .leaflet-popup-close-button {
+body.dark .leaflet-popup-close-button {
   color: rgba(255, 255, 255, 0.5);
 }
 
-.dark-popup .leaflet-popup-close-button:hover {
+body.dark .leaflet-popup-close-button:hover {
   color: #e2e2e2;
 }

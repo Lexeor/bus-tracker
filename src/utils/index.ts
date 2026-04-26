@@ -70,13 +70,13 @@ export const getCurrentTimeInSeconds = (): number => {
   return now.hour() * 3600 + now.minute() * 60 + now.second();
 };
 
-export const formatTimeUntil = (seconds: number): string => {
-  if (seconds < 60) return `${seconds} sek`;
+export const formatTimeUntil = (seconds: number, labels: { sec: string; min: string; h: string }): string => {
+  if (seconds < 60) return `${seconds} ${labels.sec}`;
   const minutes = Math.floor(seconds / 60);
-  if (minutes < 60) return `${minutes} min`;
+  if (minutes < 60) return `${minutes} ${labels.min}`;
   const hours = Math.floor(minutes / 60);
   const mins = minutes % 60;
-  return `${hours}s ${mins}m`;
+  return mins > 0 ? `${hours} ${labels.h} ${mins} ${labels.min}` : `${hours} ${labels.h}`;
 };
 
 const clampProgress = (value: number) => Math.max(0, Math.min(1, value));

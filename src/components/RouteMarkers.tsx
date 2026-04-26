@@ -8,6 +8,7 @@ interface RouteMarkersProps {
   lines: TransportLine[];
   visibleRoutes: boolean[];
   routeCoordinatesStore: RouteCoordinates;
+  onLineActivate: (lineIndex: number) => void;
 }
 
 /**
@@ -16,7 +17,7 @@ interface RouteMarkersProps {
  * For stops shared between routes, the popup will show departures from every
  * route that passes through that position, not just the currently visible one.
  */
-const RouteMarkers: FC<RouteMarkersProps> = ({ lines, visibleRoutes, routeCoordinatesStore }) => {
+const RouteMarkers: FC<RouteMarkersProps> = ({ lines, visibleRoutes, routeCoordinatesStore, onLineActivate }) => {
   // Pre-compute: for each physical position (lat,lng) → all (stop, line) pairs.
   // Within a single line a stop can repeat (e.g. igalo is both first and last
   // stop of Line 1); we keep only the first occurrence per line.
@@ -40,7 +41,7 @@ const RouteMarkers: FC<RouteMarkersProps> = ({ lines, visibleRoutes, routeCoordi
     <>
       {lines.map((line, index) => (
         <Fragment key={line.id}>
-          <TransportMarker line={line} hidden={!visibleRoutes[index]} routeCoordinatesStore={routeCoordinatesStore} />
+          <TransportMarker line={line} lineIndex={index} hidden={!visibleRoutes[index]} routeCoordinatesStore={routeCoordinatesStore} onLineActivate={onLineActivate} />
           {getActiveStops(line).map((stop, stopIndex) => {
             const key = `${stop.lat},${stop.lng}`;
             const allEntries = stopsByPosition.get(key) ?? [];

@@ -23,6 +23,18 @@ msgid "now"
 msgstr "Sada"
 
 #. js-lingui-explicit-id
+msgid "time.sec"
+msgstr "sek"
+
+#. js-lingui-explicit-id
+msgid "time.min"
+msgstr "min"
+
+#. js-lingui-explicit-id
+msgid "time.h"
+msgstr "h"
+
+#. js-lingui-explicit-id
 msgid "languageSwitched"
 msgstr "Jezik promijenjen na Crnogorski"
 

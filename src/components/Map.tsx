@@ -70,6 +70,19 @@ const Map: FC = () => {
     return lines[focusedRouteIndex] || null;
   }, [focusedRouteIndex]);
 
+  const handleLineActivate = (lineIndex: number) => {
+    const newRoutes = Array(lines.length).fill(false) as boolean[];
+    // Ferry lines 3 & 4 are always toggled together (indices 2 and 3)
+    if (lineIndex === 2 || lineIndex === 3) {
+      newRoutes[2] = true;
+      newRoutes[3] = true;
+    } else {
+      newRoutes[lineIndex] = true;
+    }
+    setVisibleRoutes(newRoutes);
+    // Intentionally no setFocusedRouteIndex — camera should stay on the clicked bus
+  };
+
   return (
     <div className="h-dvh w-screen fixed inset-0 overflow-hidden">
       <MapContainer center={defaultCenter} zoom={13} className="h-full w-full bg-[#01579b]" zoomControl={false} doubleTapDragZoom="center" doubleTapDragZoomOptions={{ reverse: true }}>
@@ -87,7 +100,7 @@ const Map: FC = () => {
         {userLocation && <UserLocationMarker position={userLocation} />}
 
         {/* Route markers (buses and stops) */}
-        <RouteMarkers lines={lines} visibleRoutes={visibleRoutes} routeCoordinatesStore={routeCoordinatesStore} />
+        <RouteMarkers lines={lines} visibleRoutes={visibleRoutes} routeCoordinatesStore={routeCoordinatesStore} onLineActivate={handleLineActivate} />
       </MapContainer>
 
       {/* UI Controls */}

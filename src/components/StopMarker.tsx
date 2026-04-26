@@ -81,7 +81,7 @@ const StopMarker: FC<{
         click: () => onStopClick?.(stop, line),
       }}
     >
-      <Popup closeButton={false} className={isDark ? 'dark-popup' : ''}>
+      <Popup closeButton={false}>
         <div className="min-w-[200px] pt-6!">
           <h3 className="absolute top-0 left-0 w-full rounded-t-xl text-white px-1 py-1.5 text-center" style={{ backgroundColor: line.color }}>
             {stop.name}
@@ -114,7 +114,13 @@ const StopMarker: FC<{
                         <span className="text-sm font-medium dark:text-[#e2e2e2]">{bus.scheduledTime}</span>
                       </div>
                       <span className="text-sm font-semibold" style={{ color: bus.timeUntilArrival < 60 ? '#ef4444' : bus.color }}>
-                        {bus.timeUntilArrival < 0 ? i18n._('now') : formatTimeUntil(bus.timeUntilArrival)}
+                        {bus.timeUntilArrival < 0
+                            ? i18n._('now')
+                            : formatTimeUntil(bus.timeUntilArrival, {
+                                sec: i18n._('time.sec'),
+                                min: i18n._('time.min'),
+                                h: i18n._('time.h'),
+                              })}
                       </span>
                     </div>
                   ))}

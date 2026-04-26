@@ -102,12 +102,14 @@ const createTransportIcon = (color: string, lineId: number, rotation: number = 0
 
 interface BusMarkerProps {
   line: Line;
+  lineIndex: number;
   hidden?: boolean;
   routeCoordinatesStore: RouteCoordinates;
+  onLineActivate: (lineIndex: number) => void;
 }
 
 // Bus Markers Component
-const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesStore }) => {
+const TransportMarker: FC<BusMarkerProps> = ({ line, lineIndex, hidden, routeCoordinatesStore, onLineActivate }) => {
   const [transportPositions, setTransportPositions] = useState<TransportPosition[]>([]);
   const [routeReady, setRouteReady] = useState(false);
   const { i18n } = useLingui();
@@ -233,8 +235,13 @@ const TransportMarker: FC<BusMarkerProps> = ({ line, hidden, routeCoordinatesSto
         }
 
         return (
-          <Marker key={`bus-${line.id}-${transport.busIndex}`} position={transport.position} icon={createTransportIcon(line.color, line.id, transport.rotation, line.type, isDark)}>
-            <Popup className={isDark ? 'dark-popup' : ''}>
+          <Marker
+              key={`bus-${line.id}-${transport.busIndex}`}
+              position={transport.position}
+              icon={createTransportIcon(line.color, line.id, transport.rotation, line.type, isDark)}
+              eventHandlers={{ click: () => onLineActivate(lineIndex) }}
+            >
+            <Popup>
               <div style={{ minWidth: '250px' }}>
                 <h3 style={{ margin: '0 0 10px 0', color: line.color }}>
                   {line.type === 'bus' ? i18n._('bus') : i18n._('ferry')} #{transport.busIndex + 1} - {i18n._('line')} {line.id}

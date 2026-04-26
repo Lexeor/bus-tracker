@@ -23,6 +23,18 @@ msgid "now"
 msgstr "Сейчас"
 
 #. js-lingui-explicit-id
+msgid "time.sec"
+msgstr "сек"
+
+#. js-lingui-explicit-id
+msgid "time.min"
+msgstr "мин"
+
+#. js-lingui-explicit-id
+msgid "time.h"
+msgstr "ч"
+
+#. js-lingui-explicit-id
 msgid "languageSwitched"
 msgstr "Язык изменён на Русский"
 
