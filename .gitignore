@@ -12,7 +12,7 @@ node_modules
 dist
 dist-ssr
 *.local
-src/locales
+src/locales/*.js
 
 # Editor directories and files
 .vscode/*
@@ -27,3 +27,6 @@ src/locales
 
 # Claude
 CLAUDE.md
+
+# Scripts
+*.sh
